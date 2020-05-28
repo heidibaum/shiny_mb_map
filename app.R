@@ -4,18 +4,28 @@ library(shiny)
 library(leaflet)
 library(htmltools)
 
+#####
+# To-do:
+# add menuItem by studies: add other elements
+# update webiste address
+# change color
+#
+#####
+
+
 ## ui.R ##
 
 ## UI CONFIG
 
 ## Header
-header <- dashboardHeader(title = "R-Ladies")
+header <- dashboardHeader(title = "MB-collaborators")
 
 # Sidebar content
 sidebar <- dashboardSidebar(
   sidebarMenu(
-    menuItem(text = "R-Ladies", tabName = "R-Ladies", icon = icon("dashboard")),
-    menuItem(text = "By Region", tabName = "region", icon = icon("dashboard")),
+    menuItem(text = "ManyBabies", tabName = "manybabies", icon = icon("baby")), # test next 3 icons (FontAwesome)
+    menuItem(text = "By Studies", tabName = "studies", icon = icon("graduation-cap")), # add other elements
+    menuItem(text = "By Region", tabName = "region", icon = icon("globe")), 
     menuItem(text = "About", tabName = "about", icon = icon("heart"))
   )
 )
@@ -27,8 +37,8 @@ body <-
       
       # Front Page
       
-      # First sidebar tab - R-Ladies
-      tabItem(tabName = "R-Ladies",
+      # First sidebar tab - MB
+      tabItem(tabName = "ManyBabies",
               selected = TRUE, 
         
         fluidRow(
@@ -36,24 +46,28 @@ body <-
                         top = 10, left = "auto", right = 20, width = "250px",
                         div(
                           tags$a(target="_blank", 
-                                 href = "http://www.rladies.org", 
-                                 tags$img(src="R-LadiesGlobal_RBG_online_LogoWithText.png", 
+                                 href = "http://https://rodrigodalben.github.io/", # update
+                                 tags$img(src="avatar-icon_cb.png", 
                                           height = "30px", id = "logo") 
                           )
                         )
           ),
           # A static valueBox
-          valueBox(dim(rladies_groups)[1], "R-Ladies groups on meetup.com", 
-                   icon("meetup", lib = "font-awesome"), width = 3),
-          valueBox(length(unique(rladies_groups$country)), "R-Ladies Countries", 
-                   icon = icon("map-o"), width = 3),
-          valueBox(length(rladies_groups$city), "R-Ladies Cities", 
-                   icon = icon("map-marker"), color = "purple", width = 3),
-          valueBox(sum(rladies_groups$members), "R-Ladies members on meetup.com", 
-                   icon = icon("users"), width = 3)
+          valueBox(length(unique(mb_collaborators$studies)), "MB Studies", 
+                   icon = icon("graduation-cap"), width = 3), # add color if necessary
+          valueBox(length(unique(mb_collaborators$researcher)), "MB Collaborators", 
+                   icon("users", lib = "font-awesome"), width = 3),
+          valueBox(lenght(mb_collaborators$institution), "MB Institutions", 
+                   icon = icon("university"), width = 3),
+          valueBox(length(unique(mb_collaborators$country)), "MB Countries", 
+                   icon = icon("map-o"), width = 3)
         ),
         leafletOutput('map', height = 700)
       ),
+      
+      
+      ##### CONTINUE HERE! MERGE US AND CANADA! ; MAYBE NEED TO RECREATE SOME GROUPS AND INFO
+      
       
       # Second sidebar tab - Region
       tabItem(tabName = "region",
@@ -180,14 +194,18 @@ body <-
               fluidPage(
                 h1(strong("About:")),
                 p("This app was developed by ",
-                  a("R-Ladies.", href = "http://www.rladies.org"), 
+                  a("R-Ladies", href = "http://www.rladies.org"), 
+                  "and adapted by",
+                  a("ManyBabies", href = "https://rodrigodalben.github.io/"), # update website
                   "You can find the source code",
-                  a("here.", href = "https://github.com/rladies/rshinylady")),
+                  a("here.", href = "https://github.com/RodrigoDalBen/shiny_mb_map")),
                   
-                img(src = "R-LadiesGlobal_RBG_online_LogoWithText.png", height = 300, width = 300)
+                img(src = "avatar-icon_cb.png", height = 200, width = 200)
                 
               )
-      )))
+      )
+      
+      ))
 
 
 
@@ -201,55 +219,55 @@ icons <- awesomeIcons(icon = "whatever",
 
 
 # Set up popup content for global and regional maps
-global_popups <- paste0("<b>", rladies_groups$url, "</b>", "<br/>",
-                       "Created: ", as.Date(rladies_groups$created), "<br/>",
-                       "Members: ", rladies_groups$members
+global_popups <- paste0("<b>", mb_collaborators$url, "</b>", "<br/>",
+                       "Created: ", as.Date(mb_collaborators$created), "<br/>",
+                       "collaborators: ", mb_collaborators$collaborators
 )
 usa_popups <- paste0("<b>", groups_usa$url, "</b>", "<br/>",
                                "Created: ", as.Date(groups_usa$created), "<br/>",
-                               "Members: ", groups_usa$members
+                               "collaborators: ", groups_usa$collaborators
 )
 canada_popups <- paste0("<b>", groups_canada$url, "</b>", "<br/>",
                      "Created: ", as.Date(groups_canada$created), "<br/>",
-                     "Members: ", groups_canada$members
+                     "collaborators: ", groups_canada$collaborators
 )
 latam_popups <- paste0("<b>", groups_latam$url, "</b>", "<br/>",
                      "Created: ", as.Date(groups_latam$created), "<br/>",
-                     "Members: ", groups_latam$members
+                     "collaborators: ", groups_latam$collaborators
 )
 europe_popups <- paste0("<b>", groups_europe$url, "</b>", "<br/>",
                      "Created: ", as.Date(groups_europe$created), "<br/>",
-                     "Members: ", groups_europe$members
+                     "collaborators: ", groups_europe$collaborators
 )
 africa_popups <- paste0("<b>", groups_africa$url, "</b>", "<br/>",
                      "Created: ", as.Date(groups_africa$created), "<br/>",
-                     "Members: ", groups_africa$members
+                     "collaborators: ", groups_africa$collaborators
 )
 asia_popups <- paste0("<b>", groups_asia$url, "</b>", "<br/>",
                      "Created: ", as.Date(groups_asia$created), "<br/>",
-                     "Members: ", groups_asia$members
+                     "collaborators: ", groups_asia$collaborators
 )
 australia_popups <- paste0("<b>", groups_australia$url, "</b>", "<br/>",
                       "Created: ", as.Date(groups_australia$created), "<br/>",
-                      "Members: ", groups_australia$members
+                      "collaborators: ", groups_australia$collaborators
 )
 
 
 # # Set up popup content
 
-# rladies_groups$fullurl <- paste0("https://www.meetup.com/", rladies_groups$urlname, "/")
-# rladies_groups$url <- paste0("<a href='", rladies_groups$fullurl, "'>", rladies_groups$name, "</a>")
+# mb_collaborators$fullurl <- paste0("https://www.meetup.com/", mb_collaborators$urlname, "/")
+# mb_collaborators$url <- paste0("<a href='", mb_collaborators$fullurl, "'>", mb_collaborators$name, "</a>")
 
-# popup_content <- paste0("<b>", rladies_groups$url, "</b>", "<br/>",
-#                        "Created: ", as.Date(rladies_groups$created), "<br/>",
-#                        "Members: ", rladies_groups$members
+# popup_content <- paste0("<b>", mb_collaborators$url, "</b>", "<br/>",
+#                        "Created: ", as.Date(mb_collaborators$created), "<br/>",
+#                        "collaborators: ", mb_collaborators$collaborators
 # )
 
 
 server <- function(input, output) { 
   
   output$map <- renderLeaflet({
-    leaflet(data = rladies_groups) %>% 
+    leaflet(data = mb_collaborators) %>% 
       addTiles() %>%
       addAwesomeMarkers(~lon, ~lat, popup = global_popups, icon = icons)
   })
