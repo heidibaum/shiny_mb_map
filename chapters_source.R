@@ -12,6 +12,10 @@
 # keep variables name lowercase
 # MB3N is empty for now
 # dfs arranged by studies Z-A (most to less recent), then by institutions name (A-Z)
+# dfs:
+#   1. summary_ = pop-ups; map & stats
+#   2. collab_ = collaborators info 
+#   extra = created_ serves as a filter/arrange pre-step.
 
 # add studies separation AND link to app;
 
@@ -60,14 +64,19 @@ mb_collaborators <- mb_collaborators[, c(1:8, 12, 9:11)] # column reorder
 mb_collaborators$fullurl <- paste0("https://rodrigodalben.github.io/", mb_collaborators$studies, "/")
 mb_collaborators$url <- paste0("<a href='", mb_collaborators$fullurl, "'>", mb_collaborators$studies, "</a>")
 
-
-# dfs:
-#   1. created_ = map & stats
-#   2. summary_ = pop-ups
-#   3. collab_ = collaborators info 
+# maps
+# global
+summary_global <- 
+  mb_collaborators %>% 
+  group_by(Latitude, Longitude) %>%
+  summarise(
+    institution = paste(unique(institution), collapse = ", "),
+    researcher = paste(unique(researcher), collapse = ", "),
+    studies = paste(unique(studies), collapse = ", "),
+  ) %>% 
+  ungroup()
 
 # Separate by continent
-
 # North America
 created_nortam <- 
   mb_collaborators %>% 
@@ -80,8 +89,8 @@ summary_nortam <-
   summarise(
     institution = paste(unique(institution), collapse = ", "),
     researcher = paste(unique(researcher), collapse = ", "),
-    studies = paste(unique(studies), collapse = ", ")
-    )
+    studies = paste(unique(studies), collapse = ", "),
+    ) 
 
 collab_nortam <- 
   created_nortam %>% 
@@ -182,7 +191,7 @@ summary_asia <-
     institution = paste(unique(institution), collapse = ", "),
     researcher = paste(unique(researcher), collapse = ", "),
     studies = paste(unique(studies), collapse = ", ")
-    )
+    ) 
 
 collab_asia <- 
   created_asia %>% 

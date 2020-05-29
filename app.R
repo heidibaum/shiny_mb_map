@@ -18,13 +18,13 @@ library(htmltools)
 ## UI CONFIG
 
 ## Header
-header <- dashboardHeader(title = "MB-collaborators")
+header <- dashboardHeader(title = "ManyBabies")
 
 # Sidebar content
 sidebar <- dashboardSidebar(
   sidebarMenu(
-    menuItem(text = "ManyBabies", tabName = "manybabies", icon = icon("baby")), # test next 3 icons (FontAwesome)
-  #  menuItem(text = "By Studies", tabName = "studies", icon = icon("graduation-cap")), # add other elements
+    menuItem(text = "ManyBabies", tabName = "manybabies", icon = icon("user-graduate")), 
+  # menuItem(text = "By Studies", tabName = "studies", icon = icon("graduation-cap")), # add other elements
     menuItem(text = "By Region", tabName = "region", icon = icon("globe")), 
     menuItem(text = "About", tabName = "about", icon = icon("heart"))
   )
@@ -38,7 +38,7 @@ body <-
       # Front Page
       
       # First sidebar tab - MB
-      tabItem(tabName = "ManyBabies",
+      tabItem(tabName = "manybabies",
               selected = TRUE, 
         
         fluidRow(
@@ -46,21 +46,21 @@ body <-
                         top = 10, left = "auto", right = 20, width = "250px",
                         div(
                           tags$a(target="_blank", 
-                                 href = "http://https://rodrigodalben.github.io/", # update
+                                 href = "http://rodrigodalben.github.io/", # update
                                  tags$img(src="avatar-icon_cb.png", 
-                                          height = "30px", id = "logo") 
+                                          height = "35px", id = "logo") 
                           )
                         )
           ),
           # A static valueBox
           valueBox(length(unique(mb_collaborators$studies)), "MB Studies", 
-                   icon = icon("graduation-cap"), width = 3), # add color if necessary
+                   icon = icon("graduation-cap", lib = "font-awesome"), width = 3), # add color if necessary
           valueBox(length(unique(mb_collaborators$researcher)), "MB Collaborators", 
                    icon("users", lib = "font-awesome"), width = 3),
           valueBox(length(unique(mb_collaborators$institution)), "MB Institutions", 
-                   icon = icon("university"), width = 3),
+                   icon = icon("university", lib = "font-awesome"), width = 3),
           valueBox(length(unique(mb_collaborators$country)), "MB Countries", 
-                   icon = icon("map-o"), width = 3)
+                   icon = icon("map-o", lib = "font-awesome"), width = 3)
         ),
         leafletOutput('map', height = 700)
       ),
@@ -84,7 +84,7 @@ body <-
                                                "ManyBabies collaborators in North America", 
                                                icon = icon("glyphicon-blackboard"), width = 18
                                       ),
-                                      box("Created at", width = 18, tableOutput("created_nortam"))
+                                      box("Created at", width = 18, tableOutput("collab_nortam"))
                                     ),
                                     column(width = 6,
                                       leafletOutput('map_nortam')
@@ -100,7 +100,7 @@ body <-
                                                "ManyBabies collaborators in Latin America", 
                                                icon = icon("glyphicon-blackboard"), width = 18
                                       ),
-                                      box("Created at", width = 18, tableOutput("created_latam")
+                                      box("Created at", width = 18, tableOutput("collab_latam")
                                       )
                                     ),
                                     column(
@@ -118,7 +118,7 @@ body <-
                                                "ManyBabies collaborators in Europe",
                                                icon = icon("glyphicon-blackboard"), width = 18
                                       ),
-                                      box("Created at", width = 18, tableOutput("created_europe")
+                                      box("Created at", width = 18, tableOutput("collab_europe")
                                       )
                                     ),
                                     column(
@@ -136,7 +136,7 @@ body <-
                                                "ManyBabies collaborators in Africa", 
                                                icon = icon("glyphicon-blackboard"), width = 18
                                       ),
-                                      box("Created at", width = 18, tableOutput("created_africa")
+                                      box("Created at", width = 18, tableOutput("collab_africa")
                                       )
                                     ),
                                     column(
@@ -153,7 +153,7 @@ body <-
                                                "ManyBabies collaborators in Asia",
                                                icon = icon("glyphicon-blackboard"), width = 18
                                       ),
-                                      box("Created at", width = 18, tableOutput("created_asia")
+                                      box("Created at", width = 18, tableOutput("collab_asia")
                                       )
                                     ),
                                     column(
@@ -170,7 +170,7 @@ body <-
                                                "ManyBabies collaborators in Oceania",
                                                icon = icon("glyphicon-blackboard"), width = 18
                                       ),
-                                      box("Created at", width = 18, tableOutput("created_oceania")
+                                      box("Created at", width = 18, tableOutput("collab_oceania")
                                       )
                                     ),
                                     column(
@@ -202,22 +202,20 @@ body <-
 
 
 
-ui <- dashboardPage(skin = "black", header, sidebar, body) # color test
+ui <- dashboardPage(skin = "black", header, sidebar, body)
 
 icons <- awesomeIcons(icon = "whatever",
                       iconColor = "black",
-                      library = "ion", # check if this library will work... I was calling fa (fontawesome)
-                      markerColor = "#F5F5F5") # color test
+                      library = "ion", 
+                      markerColor = "blue") 
 
 
 # Set up popup content for global and regional maps
+### we want url to point to studies, but not region. FIX
 
-### we want url to point to studies, but not region.
-### global pop-up does not make sense.
-
-global_popups <- paste0("<b>", "ManyBabies", "</b>", "<br/>", # ADD link here?
-                        "Researchers: ", mb_collaborators$researcher, "<br/>",
-                        "Studies: ", mb_collaborators$studies # original: members
+global_popups <- paste0("<b>", summary_global$institution, "</b>", "<br/>", 
+                        "Researchers: ", summary_global$researcher, "<br/>", 
+                        "Studies: ", summary_global$studies  
 )
 nortam_popups <- paste0("<b>", summary_nortam$institution, "</b>", "<br/>",
                         "Researchers: ", summary_nortam$researcher, "<br/>",
@@ -247,53 +245,46 @@ oceania_popups <- paste0("<b>", summary_oceania$institution, "</b>", "<br/>",
 
 # SERVER CONFIG
 
-### for region (probability the same for studies)
-## we need 3 dfs: 
-#       1. Tables = researcher, studies, institution, country (summary; unique; )
-#       2. pop-up = OK
-#       3. map = OK created
-
-
 server <- function(input, output) { 
   
   output$map <- renderLeaflet({               
-    leaflet(data = mb_collaborators) %>% 
+    leaflet(summary_global) %>% # test
       addTiles() %>%
-      addAwesomeMarkers(~Longitude, ~Latitute, popup = global_popups, icon = icons)
+      addAwesomeMarkers(~Longitude, ~Latitude, popup = global_popups, icon = icons)
   })
   output$collab_nortam <- renderTable(collab_nortam, striped = TRUE, hover = TRUE) # df collab
   output$map_nortam <- renderLeaflet({
-    leaflet(created_nortam) %>% # df map
+    leaflet(summary_nortam) %>% # df map
       addTiles() %>%
       addMarkers(~Longitude, ~Latitude, popup = nortam_popups) # df pop-ups
   })
   output$collab_latam <- renderTable(collab_latam, striped = TRUE, hover = TRUE)
   output$map_latam <- renderLeaflet({
-    leaflet(created_latam) %>% 
+    leaflet(summary_latam) %>% 
       addTiles() %>%
       addMarkers(~Longitude, ~Latitude, popup = latam_popups) 
   })
   output$collab_europe <- renderTable(collab_europe, striped = TRUE, hover = TRUE)
   output$map_europe <- renderLeaflet({
-    leaflet(created_europe) %>%
+    leaflet(summary_europe) %>%
       addTiles() %>%
       addMarkers(~Longitude, ~Latitude, popup = europe_popups)
   })
   output$collab_africa <- renderTable(collab_africa, striped = TRUE, hover = TRUE)
   output$map_africa <- renderLeaflet({
-    leaflet(created_africa) %>% 
+    leaflet(summary_africa) %>% 
       addTiles() %>%
       addMarkers(~Longitude, ~Latitude, popup = africa_popups) 
   })
   output$collab_asia <- renderTable(collab_asia, striped = TRUE, hover = TRUE)
   output$map_asia <- renderLeaflet({
-    leaflet(created_asia) %>% 
+    leaflet(summary_asia) %>% 
       addTiles() %>%
       addMarkers(~Longitude, ~Latitude, popup = asia_popups) 
   })
   output$collab_oceania <- renderTable(collab_oceania, striped = TRUE, hover = TRUE)
   output$map_oceania <- renderLeaflet({
-    leaflet(created_oceania) %>% 
+    leaflet(summary_oceania) %>% 
       addTiles() %>%
       addMarkers(~Longitude, ~Latitude, popup = oceania_popups) 
   })
