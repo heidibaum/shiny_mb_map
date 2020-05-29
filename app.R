@@ -24,7 +24,7 @@ header <- dashboardHeader(title = "MB-collaborators")
 sidebar <- dashboardSidebar(
   sidebarMenu(
     menuItem(text = "ManyBabies", tabName = "manybabies", icon = icon("baby")), # test next 3 icons (FontAwesome)
-    menuItem(text = "By Studies", tabName = "studies", icon = icon("graduation-cap")), # add other elements
+  #  menuItem(text = "By Studies", tabName = "studies", icon = icon("graduation-cap")), # add other elements
     menuItem(text = "By Region", tabName = "region", icon = icon("globe")), 
     menuItem(text = "About", tabName = "about", icon = icon("heart"))
   )
@@ -57,7 +57,7 @@ body <-
                    icon = icon("graduation-cap"), width = 3), # add color if necessary
           valueBox(length(unique(mb_collaborators$researcher)), "MB Collaborators", 
                    icon("users", lib = "font-awesome"), width = 3),
-          valueBox(lenght(mb_collaborators$institution), "MB Institutions", 
+          valueBox(length(unique(mb_collaborators$institution)), "MB Institutions", 
                    icon = icon("university"), width = 3),
           valueBox(length(unique(mb_collaborators$country)), "MB Countries", 
                    icon = icon("map-o"), width = 3)
@@ -69,38 +69,25 @@ body <-
       ##### CONTINUE HERE! MERGE US AND CANADA! ; MAYBE NEED TO RECREATE SOME GROUPS AND INFO
       
       
-      # Second sidebar tab - Region
+      # ADD SECOND TAB: STUDIES!
+      
+      
+      # Third sidebar tab - Region
       tabItem(tabName = "region",
-              navbarPage(title = 'R-Ladies',
+              navbarPage(title = 'ManyBabies',
                          
-                         tabPanel(title = 'USA',
+                         tabPanel(title = 'North America',
                                   fluidRow(
                                     column(width = 4,
                                       # A static valueBox
-                                      valueBox(nrow(groups_usa), "R-Ladies groups in the US", 
+                                      valueBox(nrow(collab_nortam), 
+                                               "ManyBabies collaborators in North America", 
                                                icon = icon("glyphicon-blackboard"), width = 18
                                       ),
-                                      box("Created at", width = 18, tableOutput("created_usa"))
+                                      box("Created at", width = 18, tableOutput("created_nortam"))
                                     ),
                                     column(width = 6,
-                                      leafletOutput('map_usa')
-                                    )
-                                  )
-                         ),
-                         tabPanel(title = 'Canada',
-                                  fluidRow(
-                                    column(
-                                      width = 4,
-                                      # A static valueBox
-                                      valueBox(nrow(groups_canada), "R-Ladies groups in Canada", 
-                                               icon = icon("glyphicon-blackboard"), width = 18
-                                      ),
-                                      box("Created at", width = 18, tableOutput("created_canada")
-                                      )
-                                    ),
-                                    column(
-                                      width = 8,
-                                      leafletOutput('map_canada')
+                                      leafletOutput('map_nortam')
                                     )
                                   )
                          ),
@@ -109,7 +96,8 @@ body <-
                                     column(
                                       width = 4,
                                       # A static valueBox
-                                      valueBox(nrow(groups_latam), "R-Ladies groups in Latin America", 
+                                      valueBox(nrow(collab_latam),
+                                               "ManyBabies collaborators in Latin America", 
                                                icon = icon("glyphicon-blackboard"), width = 18
                                       ),
                                       box("Created at", width = 18, tableOutput("created_latam")
@@ -126,7 +114,8 @@ body <-
                                     column(
                                       width = 4,
                                       # A static valueBox
-                                      valueBox(nrow(groups_europe), "R-Ladies groups in Europe",
+                                      valueBox(nrow(collab_europe),
+                                               "ManyBabies collaborators in Europe",
                                                icon = icon("glyphicon-blackboard"), width = 18
                                       ),
                                       box("Created at", width = 18, tableOutput("created_europe")
@@ -143,7 +132,8 @@ body <-
                                     column(
                                       width = 4,
                                       # A static valueBox
-                                      valueBox(nrow(groups_africa), "R-Ladies groups in Africa", 
+                                      valueBox(nrow(collab_africa),
+                                               "ManyBabies collaborators in Africa", 
                                                icon = icon("glyphicon-blackboard"), width = 18
                                       ),
                                       box("Created at", width = 18, tableOutput("created_africa")
@@ -159,7 +149,8 @@ body <-
                                     column(
                                       width = 4,
                                       # A static valueBox
-                                      valueBox(nrow(groups_asia), "R-Ladies groups in Asia",
+                                      valueBox(nrow(collab_asia),
+                                               "ManyBabies collaborators in Asia",
                                                icon = icon("glyphicon-blackboard"), width = 18
                                       ),
                                       box("Created at", width = 18, tableOutput("created_asia")
@@ -170,20 +161,21 @@ body <-
                                       leafletOutput('map_asia'))
                                   )
                          ),
-                         tabPanel(title = 'Australia/Oceania',
+                         tabPanel(title = 'Oceania',
                                   fluidRow(
                                     column(
                                       width = 4,
                                       # A static valueBox
-                                      valueBox(nrow(groups_australia), "R-Ladies groups in Australia",
+                                      valueBox(nrow(collab_oceania),
+                                               "ManyBabies collaborators in Oceania",
                                                icon = icon("glyphicon-blackboard"), width = 18
                                       ),
-                                      box("Created at", width = 18, tableOutput("created_australia")
+                                      box("Created at", width = 18, tableOutput("created_oceania")
                                       )
                                     ),
                                     column(
                                       width = 8,
-                                      leafletOutput('map_australia'))
+                                      leafletOutput('map_oceania'))
                                   )
                          )
               )
@@ -198,7 +190,7 @@ body <-
                   "and adapted by",
                   a("ManyBabies", href = "https://rodrigodalben.github.io/"), # update website
                   "You can find the source code",
-                  a("here.", href = "https://github.com/RodrigoDalBen/shiny_mb_map")),
+                  a("here.", href = "https://github.com/RodrigoDalBen/shiny_mb_map")), # update if moved
                   
                 img(src = "avatar-icon_cb.png", height = 200, width = 200)
                 
@@ -210,108 +202,100 @@ body <-
 
 
 
-ui <- dashboardPage(skin = "purple", header, sidebar, body)
+ui <- dashboardPage(skin = "black", header, sidebar, body) # color test
 
 icons <- awesomeIcons(icon = "whatever",
                       iconColor = "black",
-                      library = "ion",
-                      markerColor = "purple")
+                      library = "ion", # check if this library will work... I was calling fa (fontawesome)
+                      markerColor = "#F5F5F5") # color test
 
 
 # Set up popup content for global and regional maps
-global_popups <- paste0("<b>", mb_collaborators$url, "</b>", "<br/>",
-                       "Created: ", as.Date(mb_collaborators$created), "<br/>",
-                       "collaborators: ", mb_collaborators$collaborators
+
+### we want url to point to studies, but not region.
+### global pop-up does not make sense.
+
+global_popups <- paste0("<b>", "ManyBabies", "</b>", "<br/>", # ADD link here?
+                        "Researchers: ", mb_collaborators$researcher, "<br/>",
+                        "Studies: ", mb_collaborators$studies # original: members
 )
-usa_popups <- paste0("<b>", groups_usa$url, "</b>", "<br/>",
-                               "Created: ", as.Date(groups_usa$created), "<br/>",
-                               "collaborators: ", groups_usa$collaborators
+nortam_popups <- paste0("<b>", summary_nortam$institution, "</b>", "<br/>",
+                        "Researchers: ", summary_nortam$researcher, "<br/>",
+                        "Studies: ", summary_nortam$studies
 )
-canada_popups <- paste0("<b>", groups_canada$url, "</b>", "<br/>",
-                     "Created: ", as.Date(groups_canada$created), "<br/>",
-                     "collaborators: ", groups_canada$collaborators
+latam_popups <- paste0("<b>", summary_latam$institution, "</b>", "<br/>",
+                       "Researchers: ", summary_latam$researcher, "<br/>",
+                       "Studies: ", summary_latam$studies
 )
-latam_popups <- paste0("<b>", groups_latam$url, "</b>", "<br/>",
-                     "Created: ", as.Date(groups_latam$created), "<br/>",
-                     "collaborators: ", groups_latam$collaborators
+europe_popups <- paste0("<b>", summary_europe$institution, "</b>", "<br/>",
+                        "Researchers: ", summary_europe$researcher, "<br/>",
+                        "Studies: ", summary_europe$studies
 )
-europe_popups <- paste0("<b>", groups_europe$url, "</b>", "<br/>",
-                     "Created: ", as.Date(groups_europe$created), "<br/>",
-                     "collaborators: ", groups_europe$collaborators
+africa_popups <- paste0("<b>", summary_africa$institution, "</b>", "<br/>",
+                        "Researchers: ", summary_africa$researcher, "<br/>",
+                        "Studies: ", summary_africa$studies
 )
-africa_popups <- paste0("<b>", groups_africa$url, "</b>", "<br/>",
-                     "Created: ", as.Date(groups_africa$created), "<br/>",
-                     "collaborators: ", groups_africa$collaborators
+asia_popups <- paste0("<b>", summary_asia$institution, "</b>", "<br/>",
+                      "Researchers: ", summary_asia$researcher, "<br/>",
+                      "Studies: ", summary_asia$studies
 )
-asia_popups <- paste0("<b>", groups_asia$url, "</b>", "<br/>",
-                     "Created: ", as.Date(groups_asia$created), "<br/>",
-                     "collaborators: ", groups_asia$collaborators
-)
-australia_popups <- paste0("<b>", groups_australia$url, "</b>", "<br/>",
-                      "Created: ", as.Date(groups_australia$created), "<br/>",
-                      "collaborators: ", groups_australia$collaborators
+oceania_popups <- paste0("<b>", summary_oceania$institution, "</b>", "<br/>",
+                         "Researchers: ", summary_oceania$researcher, "<br/>",
+                         "Studies: ", summary_oceania$studies
 )
 
 
-# # Set up popup content
+# SERVER CONFIG
 
-# mb_collaborators$fullurl <- paste0("https://www.meetup.com/", mb_collaborators$urlname, "/")
-# mb_collaborators$url <- paste0("<a href='", mb_collaborators$fullurl, "'>", mb_collaborators$name, "</a>")
-
-# popup_content <- paste0("<b>", mb_collaborators$url, "</b>", "<br/>",
-#                        "Created: ", as.Date(mb_collaborators$created), "<br/>",
-#                        "collaborators: ", mb_collaborators$collaborators
-# )
+### for region (probability the same for studies)
+## we need 3 dfs: 
+#       1. Tables = researcher, studies, institution, country (summary; unique; )
+#       2. pop-up = OK
+#       3. map = OK created
 
 
 server <- function(input, output) { 
   
-  output$map <- renderLeaflet({
+  output$map <- renderLeaflet({               
     leaflet(data = mb_collaborators) %>% 
       addTiles() %>%
-      addAwesomeMarkers(~lon, ~lat, popup = global_popups, icon = icons)
+      addAwesomeMarkers(~Longitude, ~Latitute, popup = global_popups, icon = icons)
   })
-  output$created_usa <- renderTable(created_usa, striped = TRUE, hover = TRUE)
-  output$map_usa <- renderLeaflet({
-    leaflet(groups_usa) %>% 
+  output$collab_nortam <- renderTable(collab_nortam, striped = TRUE, hover = TRUE) # df collab
+  output$map_nortam <- renderLeaflet({
+    leaflet(created_nortam) %>% # df map
       addTiles() %>%
-      addMarkers(~lon, ~lat, popup = usa_popups) 
+      addMarkers(~Longitude, ~Latitude, popup = nortam_popups) # df pop-ups
   })
-  output$created_canada <- renderTable(created_canada, striped = TRUE, hover = TRUE)
-  output$map_canada <- renderLeaflet({
-    leaflet(groups_canada) %>% 
-      addTiles() %>%
-      addMarkers(~lon, ~lat, popup = canada_popups) 
-  })
-  output$created_latam <- renderTable(created_latam, striped = TRUE, hover = TRUE)
+  output$collab_latam <- renderTable(collab_latam, striped = TRUE, hover = TRUE)
   output$map_latam <- renderLeaflet({
-    leaflet(groups_latam) %>% 
+    leaflet(created_latam) %>% 
       addTiles() %>%
-      addMarkers(~lon, ~lat, popup = latam_popups) 
+      addMarkers(~Longitude, ~Latitude, popup = latam_popups) 
   })
-  output$created_europe <- renderTable(created_europe, striped = TRUE, hover = TRUE)
+  output$collab_europe <- renderTable(collab_europe, striped = TRUE, hover = TRUE)
   output$map_europe <- renderLeaflet({
-    leaflet(groups_europe) %>%
+    leaflet(created_europe) %>%
       addTiles() %>%
-      addMarkers(~lon, ~lat, popup = europe_popups)
+      addMarkers(~Longitude, ~Latitude, popup = europe_popups)
   })
-  output$created_africa <- renderTable(created_africa, striped = TRUE, hover = TRUE)
+  output$collab_africa <- renderTable(collab_africa, striped = TRUE, hover = TRUE)
   output$map_africa <- renderLeaflet({
-    leaflet(groups_africa) %>% 
+    leaflet(created_africa) %>% 
       addTiles() %>%
-      addMarkers(~lon, ~lat, popup = africa_popups) 
+      addMarkers(~Longitude, ~Latitude, popup = africa_popups) 
   })
-  output$created_asia <- renderTable(created_asia, striped = TRUE, hover = TRUE)
+  output$collab_asia <- renderTable(collab_asia, striped = TRUE, hover = TRUE)
   output$map_asia <- renderLeaflet({
-    leaflet(groups_asia) %>% 
+    leaflet(created_asia) %>% 
       addTiles() %>%
-      addMarkers(~lon, ~lat, popup = asia_popups) 
+      addMarkers(~Longitude, ~Latitude, popup = asia_popups) 
   })
-  output$created_australia <- renderTable(created_australia, striped = TRUE, hover = TRUE)
-  output$map_australia <- renderLeaflet({
-    leaflet(groups_australia) %>% 
+  output$collab_oceania <- renderTable(collab_oceania, striped = TRUE, hover = TRUE)
+  output$map_oceania <- renderLeaflet({
+    leaflet(created_oceania) %>% 
       addTiles() %>%
-      addMarkers(~lon, ~lat, popup = australia_popups) 
+      addMarkers(~Longitude, ~Latitude, popup = oceania_popups) 
   })
   
   
