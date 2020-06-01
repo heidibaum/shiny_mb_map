@@ -7,6 +7,9 @@
 # rename all variables consistenly across this script and the app (see indications on code);
 # check if website urls are functional;
 # check the arrangement on dfs
+# solve authentication to google sheets
+# create functions to subset
+# update website URLs on all scripts 
 
 # Notes:
 # keep variables name lowercase
@@ -22,13 +25,19 @@
 #####
 
 # load library
-library(rvest)
+#library(rvest)
 library(tidyverse)
 library(here)
-library(googlesheets4) # read database from drive
+library(googlesheets4) # database from drive
 library(countrycode) # continents from countries
 
-#library(meetupr) # data... delete? test first
+# load credentials
+options(
+  gargle_oauth_cache = ".secrets",
+  gargle_oauth_email = "dalbenwork2@gmail.com"
+  )
+
+googlesheets4::gs4_auth()
 
 # load database 
 collaborators <- googlesheets4::read_sheet("1Q9hQZ-Nop6Vqq3Ezre8waVU_qDsGhnJLsWYPh5nAih8")

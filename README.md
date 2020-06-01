@@ -1,22 +1,11 @@
-# rshinylady
+# **ManyBabies** dashboard
 
-Before running this app, install meetupr package
+This is the member dashboard for the [**ManyBabies**](https://rodrigodalben.github.io/) project.
 
-```r
-devtools::install_github("rladies/meetupr")
-```
+### App is deployed [here](https://rodrigodalben.shinyapps.io/shiny_mb_map/)
 
-then get a meetup API key and set it as an environmental variable
-
-```r
-Sys.setenv(meetup_key = "YOUR_API_KEY_HERE")`
-```
-
-The result should look like the screenshot below.
-
-![](rladiesapp.png)
+### Credits
+This app was adapted from [Rladies dashboard](https://github.com/rladies/rshinylady)
 
 
-### App is deployed at: 
 
-[https://gqueiroz.shinyapps.io/rshinylady/](https://gqueiroz.shinyapps.io/rshinylady/)
