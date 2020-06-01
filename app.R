@@ -197,7 +197,7 @@ body <-
                                     column(
                                       width = 5,
                                       # A static valueBox
-                                      valueBox(nrow(summary_mb2),
+                                      valueBox(nrow(tab_mb2),
                                                "ManyBabies collaborators in MB2", 
                                                icon = icon("glyphicon-blackboard"), width = 18
                                       ),
@@ -486,11 +486,24 @@ mb3n_popups <- paste0("<b>", summary_mb3n$institution, "</b>", "<br/>",
 # SERVER CONFIG
 server <- function(input, output) { 
   
+  # keep leaflet cluster "Green" regardless of size (looks better and avoid noise in the map)
+  green_clusters = JS("function (cluster) {    
+                      var childCount = cluster.getChildCount(); 
+                      var c = ' marker-cluster-';  
+                      c += 'small';
+                      return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) });
+                      }")
+    
+  
   # global
   output$map <- renderLeaflet({               
     leaflet(summary_global) %>% 
       addTiles() %>%
-      addAwesomeMarkers(~Longitude, ~Latitude, popup = global_popups, icon = icons)
+      addCircleMarkers(~Longitude, ~Latitude, popup = global_popups, 
+                       clusterOptions = 
+                         markerClusterOptions(maxClusterRadius = 30,
+                                              iconCreateFunction = green_clusters
+                                              ))
   })
   
   # regions
@@ -498,37 +511,57 @@ server <- function(input, output) {
   output$map_nortam <- renderLeaflet({
     leaflet(summary_nortam) %>% 
       addTiles() %>%
-      addMarkers(~Longitude, ~Latitude, popup = nortam_popups) 
+      addCircleMarkers(~Longitude, ~Latitude, popup = nortam_popups,
+                 clusterOptions =
+                   markerClusterOptions(maxClusterRadius = 30,
+                                        iconCreateFunction = green_clusters
+                                        ))
   })
   output$collab_latam <- DT::renderDataTable({collab_latam})
   output$map_latam <- renderLeaflet({
     leaflet(summary_latam) %>% 
       addTiles() %>%
-      addMarkers(~Longitude, ~Latitude, popup = latam_popups) 
+      addCircleMarkers(~Longitude, ~Latitude, popup = latam_popups,
+                 clusterOptions = 
+                   markerClusterOptions(maxClusterRadius = 30,
+                                        iconCreateFunction = green_clusters
+                                              ))
   })
   output$collab_europe <- DT::renderDataTable({collab_europe})
   output$map_europe <- renderLeaflet({
     leaflet(summary_europe) %>%
       addTiles() %>%
-      addMarkers(~Longitude, ~Latitude, popup = europe_popups)
+      addCircleMarkers(~Longitude, ~Latitude, popup = europe_popups,
+                       clusterOptions = markerClusterOptions(maxClusterRadius = 30,
+                                                             iconCreateFunction = green_clusters
+                                                             ))
   })
   output$collab_africa <- DT::renderDataTable({collab_africa})
   output$map_africa <- renderLeaflet({
     leaflet(summary_africa) %>% 
       addTiles() %>%
-      addMarkers(~Longitude, ~Latitude, popup = africa_popups) 
+      addCircleMarkers(~Longitude, ~Latitude, popup = africa_popups,
+                 clusterOptions = markerClusterOptions(maxClusterRadius = 30,
+                                                       iconCreateFunction = green_clusters
+                 )) 
   })
   output$collab_asia <- DT::renderDataTable({collab_asia})
   output$map_asia <- renderLeaflet({
     leaflet(summary_asia) %>% 
       addTiles() %>%
-      addMarkers(~Longitude, ~Latitude, popup = asia_popups) 
+      addCircleMarkers(~Longitude, ~Latitude, popup = asia_popups,
+                 clusterOptions = markerClusterOptions(maxClusterRadius = 30,
+                                                       iconCreateFunction = green_clusters
+                 )) 
   })
   output$collab_oceania <- DT::renderDataTable({collab_oceania})
   output$map_oceania <- renderLeaflet({
     leaflet(summary_oceania) %>% 
       addTiles() %>%
-      addMarkers(~Longitude, ~Latitude, popup = oceania_popups) 
+      addCircleMarkers(~Longitude, ~Latitude, popup = oceania_popups,
+                 clusterOptions = markerClusterOptions(maxClusterRadius = 30,
+                                                       iconCreateFunction = green_clusters
+                 )) 
   })
   
   # studies
@@ -536,73 +569,109 @@ server <- function(input, output) {
   output$map_mb1 <- renderLeaflet({
     leaflet(summary_mb1) %>% 
       addTiles() %>%
-      addMarkers(~Longitude, ~Latitude, popup = mb1_popups) 
+      addCircleMarkers(~Longitude, ~Latitude, popup = mb1_popups,
+                 clusterOptions = markerClusterOptions(maxClusterRadius = 30,
+                                                       iconCreateFunction = green_clusters
+                 ))  
   })
   output$tab_mb2 <- DT::renderDataTable({tab_mb2})
   output$map_mb2 <- renderLeaflet({
     leaflet(summary_mb2) %>% 
       addTiles() %>%
-      addMarkers(~Longitude, ~Latitude, popup = mb2_popups) 
+      addCircleMarkers(~Longitude, ~Latitude, popup = mb2_popups,
+                 clusterOptions = markerClusterOptions(maxClusterRadius = 30,
+                                                       iconCreateFunction = green_clusters
+                 ))  
   })
   output$tab_mb3 <- DT::renderDataTable({tab_mb3})
   output$map_mb3 <- renderLeaflet({
     leaflet(summary_mb3) %>% 
       addTiles() %>%
-      addMarkers(~Longitude, ~Latitude, popup = mb3_popups) 
+      addCircleMarkers(~Longitude, ~Latitude, popup = mb3_popups,
+                 clusterOptions = markerClusterOptions(maxClusterRadius = 30,
+                                                       iconCreateFunction = green_clusters
+                 )) 
   })
   output$tab_mb4 <- DT::renderDataTable({tab_mb4})
   output$map_mb4 <- renderLeaflet({
     leaflet(summary_mb4) %>% 
       addTiles() %>%
-      addMarkers(~Longitude, ~Latitude, popup = mb4_popups) 
+      addCircleMarkers(~Longitude, ~Latitude, popup = mb4_popups,
+                 clusterOptions = markerClusterOptions(maxClusterRadius = 30,
+                                                       iconCreateFunction = green_clusters
+                 )) 
   })
   output$tab_mb5 <- DT::renderDataTable({tab_mb5})
   output$map_mb5 <- renderLeaflet({
     leaflet(summary_mb5) %>% 
       addTiles() %>%
-      addMarkers(~Longitude, ~Latitude, popup = mb5_popups) 
+      addCircleMarkers(~Longitude, ~Latitude, popup = mb5_popups,
+                 clusterOptions = markerClusterOptions(maxClusterRadius = 30,
+                                                       iconCreateFunction = green_clusters
+                 ))  
   })
   output$tab_mb_athome <- DT::renderDataTable({tab_mb_athome})
   output$map_mb_athome <- renderLeaflet({
     leaflet(summary_mb_athome) %>% 
       addTiles() %>%
-      addMarkers(~Longitude, ~Latitude, popup = mb_athome_popups) 
+      addCircleMarkers(~Longitude, ~Latitude, popup = mb_athome_popups,
+                 clusterOptions = markerClusterOptions(maxClusterRadius = 30,
+                                                       iconCreateFunction = green_clusters
+                 )) 
   })
   output$tab_mb1a <- DT::renderDataTable({tab_mb1a})
   output$map_mb1a <- renderLeaflet({
     leaflet(summary_mb1a) %>% 
       addTiles() %>%
-      addMarkers(~Longitude, ~Latitude, popup = mb1a_popups) 
+      addCircleMarkers(~Longitude, ~Latitude, popup = mb1a_popups,
+                 clusterOptions = markerClusterOptions(maxClusterRadius = 30,
+                                                       iconCreateFunction = green_clusters
+                 )) 
   })
   output$tab_mb1b <- DT::renderDataTable({tab_mb1b})
   output$map_mb1b <- renderLeaflet({
     leaflet(summary_mb1b) %>% 
       addTiles() %>%
-      addMarkers(~Longitude, ~Latitude, popup = mb1b_popups) 
+      addCircleMarkers(~Longitude, ~Latitude, popup = mb1b_popups,
+                 clusterOptions = markerClusterOptions(maxClusterRadius = 30,
+                                                       iconCreateFunction = green_clusters
+                 )) 
   })
   output$tab_mb1l <- DT::renderDataTable({tab_mb1l})
   output$map_mb1l <- renderLeaflet({
     leaflet(summary_mb1l) %>% 
       addTiles() %>%
-      addMarkers(~Longitude, ~Latitude, popup = mb1l_popups) 
+      addCircleMarkers(~Longitude, ~Latitude, popup = mb1l_popups,
+                 clusterOptions = markerClusterOptions(maxClusterRadius = 30,
+                                                       iconCreateFunction = green_clusters
+                 )) 
   })
   output$tab_mb1n <- DT::renderDataTable({tab_mb1n})
   output$map_mb1n <- renderLeaflet({
     leaflet(summary_mb1n) %>% 
       addTiles() %>%
-      addMarkers(~Longitude, ~Latitude, popup = mb1n_popups) 
+      addCircleMarkers(~Longitude, ~Latitude, popup = mb1n_popups,
+                 clusterOptions = markerClusterOptions(maxClusterRadius = 30,
+                                                       iconCreateFunction = green_clusters
+                 ))  
   })
   output$tab_mb1t <- DT::renderDataTable({tab_mb1t})
   output$map_mb1t <- renderLeaflet({
     leaflet(summary_mb1t) %>% 
       addTiles() %>%
-      addMarkers(~Longitude, ~Latitude, popup = mb1t_popups) 
+      addCircleMarkers(~Longitude, ~Latitude, popup = mb1t_popups,
+                 clusterOptions = markerClusterOptions(maxClusterRadius = 30,
+                                                       iconCreateFunction = green_clusters
+                 )) 
   })
   output$tab_mb3n <- DT::renderDataTable({tab_mb3n})
   output$map_mb3n <- renderLeaflet({
     leaflet(summary_mb3n) %>% 
       addTiles() %>%
-      addMarkers(~Longitude, ~Latitude, popup = mb3n_popups) 
+      addCircleMarkers(~Longitude, ~Latitude, popup = mb3n_popups,
+                 clusterOptions = markerClusterOptions(maxClusterRadius = 30,
+                                                       iconCreateFunction = green_clusters
+                 )) 
   })
   
   }
