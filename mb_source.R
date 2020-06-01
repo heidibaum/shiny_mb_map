@@ -1,40 +1,37 @@
 # Rodrigo Dal Ben
-# 27/05/2020, last update: 28/05/2020
+# 27/05/2020, last update: 01/06/2020
 # adapted from: https://github.com/rladies/rshinylady
 
 ##### 
-# To-do:
-# rename all variables consistenly across this script and the app (see indications on code);
-# check if website urls are functional;
-# check the arrangement on dfs
-# solve authentication to google sheets
-# create functions to subset
-# update website URLs on all scripts 
+## To-do:
+# update website URLs on all scripts after publishin MB new website
 
-# Notes:
-# keep variables name lowercase
-# MB3N is empty for now
-# dfs arranged by studies Z-A (most to less recent), then by institutions name (A-Z)
-# dfs:
+## Notes:
+# if necessary, add more abbrevations when wrangling data;
+# keep variables name lowercase;
+# MB3N is empty for now;
+
+# for region: 
 #   1. summary_ = pop-ups; map & stats
 #   2. collab_ = collaborators info 
 #   extra = created_ serves as a filter/arrange pre-step.
 
-# add studies separation AND link to app;
+# for studies:
+#   1. tab = collaborators info for table;
+#   2. summary = pop-ups; map & stats
+#   extra = "map" filters based on studies
 
 #####
 
 # load library
-#library(rvest)
 library(tidyverse)
 library(here)
-library(googlesheets4) # database from drive
-library(countrycode) # continents from countries
+library(googlesheets4) 
+library(countrycode)
 
 # load credentials
 options(
-  gargle_oauth_cache = ".secrets",
-  gargle_oauth_email = "dalbenwork2@gmail.com"
+  gargle_oauth_cache = ".secrets"
   )
 
 googlesheets4::gs4_auth()
@@ -42,23 +39,21 @@ googlesheets4::gs4_auth()
 # load database 
 collaborators <- googlesheets4::read_sheet("1Q9hQZ-Nop6Vqq3Ezre8waVU_qDsGhnJLsWYPh5nAih8")
 
-## exclude digits and punctuations
-## check abbreviations; add more if necessary
-## differentiate "Americas"
+# clean databse 
 mb_collaborators <- 
   collaborators %>% 
   dplyr::mutate(
-    country = gsub("[[:digit:]]+", "", country),
-    country = gsub("[[:punct:]]+", "", country),
+    country = gsub("[[:digit:]]+", "", country), # exclude digits 
+    country = gsub("[[:punct:]]+", "", country), # exclude punctuation
     country = case_when(
-      country == "US" | country == "USA" ~ "United States",
+      country == "US" | country == "USA" ~ "United States", # standard abbreviation/name  
       country == "UK" ~ "United Kingdom",
       TRUE ~ country
       ),
     continent = countrycode::countrycode(country, "country.name", "continent"),
-    continent = case_when( 
+    continent = case_when( # differentiate "Americas" 
       country %in% c("United States", "Canada") ~ "North America",
-      continent == "Americas" ~ "Latin America", ## "Americas" except US and Canada;
+      continent == "Americas" ~ "Latin America", 
       TRUE ~ continent
       ),
     researcher = ifelse(is.na(researcher), 
@@ -67,11 +62,6 @@ mb_collaborators <-
     )
 
 mb_collaborators <- mb_collaborators[, c(1:8, 12, 9:11)] # column reorder
-
-## RENAME VARIABLES ; REPLACE URLS to MB WEBSITE
-# Add extra columns to set up popup content in the app
-mb_collaborators$fullurl <- paste0("https://rodrigodalben.github.io/", mb_collaborators$studies, "/")
-mb_collaborators$url <- paste0("<a href='", mb_collaborators$fullurl, "'>", mb_collaborators$studies, "</a>")
 
 # maps
 # global
@@ -87,13 +77,12 @@ summary_global <-
 
 # Separate by continent
 # North America
-created_nortam <- 
+filter_nortam <- 
   mb_collaborators %>% 
-  filter(continent == "North America") %>% 
-  arrange(desc(studies), institution)
+  filter(continent == "North America")
 
 summary_nortam <- 
-  created_nortam %>% 
+  filter_nortam %>% 
   group_by(Latitude, Longitude) %>% 
   summarise(
     institution = paste(unique(institution), collapse = ", "),
@@ -102,7 +91,7 @@ summary_nortam <-
     ) 
 
 collab_nortam <- 
-  created_nortam %>% 
+  filter_nortam %>% 
   group_by(researcher) %>% 
   summarise(
     institution = paste(unique(institution), collapse = ", "),
@@ -112,13 +101,12 @@ collab_nortam <-
   arrange(researcher)
 
 # Latin America 
-created_latam <- 
+filter_latam <- 
   mb_collaborators %>% 
-  filter(continent == "Latin America") %>% 
-  arrange(desc(studies), institution) 
+  filter(continent == "Latin America")
 
 summary_latam <- 
-  created_latam %>% 
+  filter_latam %>% 
   group_by(Latitude, Longitude) %>% 
   summarise(
     institution = paste(unique(institution), collapse = ", "),
@@ -127,7 +115,7 @@ summary_latam <-
     )
 
 collab_latam <- 
-  created_latam %>% 
+  filter_latam %>% 
   group_by(researcher) %>% 
   summarise(
     institution = paste(unique(institution), collapse = ", "),
@@ -137,13 +125,12 @@ collab_latam <-
   arrange(researcher)
 
 # Europe
-created_europe <- 
+filter_europe <- 
   mb_collaborators %>% 
-  filter(continent == "Europe") %>% 
-  arrange(desc(studies), institution) 
+  filter(continent == "Europe")
 
 summary_europe <- 
-  created_europe %>% 
+  filter_europe %>% 
   group_by(Latitude, Longitude) %>% 
   summarise(
     institution = paste(unique(institution), collapse = ", "),
@@ -152,7 +139,7 @@ summary_europe <-
     )
 
 collab_europe <- 
-  created_europe %>% 
+  filter_europe %>% 
   group_by(researcher) %>% 
   summarise(
     institution = paste(unique(institution), collapse = ", "),
@@ -163,13 +150,12 @@ collab_europe <-
 
 
 # Africa
-created_africa <- 
+filter_africa <- 
   mb_collaborators %>% 
-  filter(continent == "Africa") %>% 
-  arrange(desc(studies), institution) 
+  filter(continent == "Africa") 
 
 summary_africa <- 
-  created_africa %>% 
+  filter_africa %>% 
   group_by(Latitude, Longitude) %>% 
   summarise(
     institution = paste(unique(institution), collapse = ", "),
@@ -178,7 +164,7 @@ summary_africa <-
     )
 
 collab_africa <- 
-  created_africa %>% 
+  filter_africa %>% 
   group_by(researcher) %>% 
   summarise(
     institution = paste(unique(institution), collapse = ", "),
@@ -188,13 +174,12 @@ collab_africa <-
   arrange(researcher)
 
 # Asia
-created_asia <- 
+filter_asia <- 
   mb_collaborators %>% 
-  filter(continent == "Asia") %>% 
-  arrange(desc(studies), institution)
+  filter(continent == "Asia")
 
 summary_asia <- 
-  created_asia %>% 
+  filter_asia %>% 
   group_by(Latitude, Longitude) %>% 
   summarise(
     institution = paste(unique(institution), collapse = ", "),
@@ -203,7 +188,7 @@ summary_asia <-
     ) 
 
 collab_asia <- 
-  created_asia %>% 
+  filter_asia %>% 
   group_by(researcher) %>% 
   summarise(
     institution = paste(unique(institution), collapse = ", "),
@@ -213,13 +198,12 @@ collab_asia <-
   arrange(researcher)
 
 # Oceania
-created_oceania <- 
+filter_oceania <- 
   mb_collaborators %>% 
-  filter(continent == "Oceania") %>% 
-  arrange(desc(studies), institution) 
+  filter(continent == "Oceania")
 
 summary_oceania <- 
-  created_oceania %>% 
+  filter_oceania %>% 
   group_by(Latitude, Longitude) %>% 
   summarise(
     institution = paste(unique(institution), collapse = ", "),
@@ -228,7 +212,7 @@ summary_oceania <-
     )
 
 collab_oceania <- 
-  created_oceania %>% 
+  filter_oceania %>% 
   group_by(researcher) %>% 
   summarise(
     institution = paste(unique(institution), collapse = ", "),
@@ -241,74 +225,230 @@ collab_oceania <-
 # Separate by study
 # Main projects
 # MB1
-created_mb1 <- 
+filter_mb1 <- 
   mb_collaborators %>% 
-  filter(studies == "MB1") %>% 
-  arrange(institution) 
+  filter(studies == "MB1")
+
+tab_mb1 <- 
+  filter_mb1 %>% 
+  select(researcher, institution, lab, country, continent) %>% 
+  arrange(researcher)
+
+summary_mb1 <- 
+  filter_mb1 %>% 
+  group_by(Latitude, Longitude) %>% 
+  summarise(
+    institution = paste(unique(institution), collapse = ", "),
+    researcher = paste(unique(researcher), collapse = ", ")
+  )
+  
 
 # MB2
-created_mb2 <- 
+filter_mb2 <- 
   mb_collaborators %>% 
   filter(studies == "MB2") %>% 
   arrange(institution) 
 
+tab_mb2 <- 
+  filter_mb2 %>% 
+  select(researcher, institution, lab, country, continent) %>% 
+  arrange(researcher)
+
+summary_mb2 <- 
+  filter_mb2 %>% 
+  group_by(Latitude, Longitude) %>% 
+  summarise(
+    institution = paste(unique(institution), collapse = ", "),
+    researcher = paste(unique(researcher), collapse = ", ")
+  )
+
 # MB3
-created_mb3 <- 
+filter_mb3 <- 
   mb_collaborators %>% 
   filter(studies == "MB3") %>% 
   arrange(institution) 
 
+tab_mb3 <- 
+  filter_mb3 %>% 
+  select(researcher, institution, lab, country, continent) %>% 
+  arrange(researcher)
+
+summary_mb3 <- 
+  filter_mb3 %>% 
+  group_by(Latitude, Longitude) %>% 
+  summarise(
+    institution = paste(unique(institution), collapse = ", "),
+    researcher = paste(unique(researcher), collapse = ", ")
+  )
+
 # MB4
-created_mb4 <- 
+filter_mb4 <- 
   mb_collaborators %>% 
   filter(studies == "MB4") %>% 
   arrange(institution) 
 
+tab_mb4 <- 
+  filter_mb4 %>% 
+  select(researcher, institution, lab, country, continent) %>% 
+  arrange(researcher)
+
+summary_mb4 <- 
+  filter_mb4 %>% 
+  group_by(Latitude, Longitude) %>% 
+  summarise(
+    institution = paste(unique(institution), collapse = ", "),
+    researcher = paste(unique(researcher), collapse = ", ")
+  )
+
 # MB5
-created_mb5 <- 
+filter_mb5 <- 
   mb_collaborators %>% 
   filter(studies == "MB5") %>% 
   arrange(institution) 
 
+tab_mb5 <- 
+  filter_mb5 %>% 
+  select(researcher, institution, lab, country, continent) %>% 
+  arrange(researcher)
+
+summary_mb5 <- 
+  filter_mb5 %>% 
+  group_by(Latitude, Longitude) %>% 
+  summarise(
+    institution = paste(unique(institution), collapse = ", "),
+    researcher = paste(unique(researcher), collapse = ", ")
+  )
+
 # MB-AtHome
-created_mb_athome <- 
+filter_mb_athome <- 
   mb_collaborators %>% 
   filter(studies == "MB-AtHome") %>% 
   arrange(institution) 
 
+tab_mb_athome <- 
+  filter_mb_athome %>% 
+  select(researcher, institution, lab, country, continent) %>% 
+  arrange(researcher)
+
+summary_mb_athome <- 
+  filter_mb_athome %>% 
+  group_by(Latitude, Longitude) %>% 
+  summarise(
+    institution = paste(unique(institution), collapse = ", "),
+    researcher = paste(unique(researcher), collapse = ", ")
+  )
+
 # Spin-offs
 # MB1A
-created_mb1a <- 
+filter_mb1a <- 
   mb_collaborators %>% 
   filter(studies == "MB1A") %>% 
   arrange(institution) 
 
+tab_mb1a <- 
+  filter_mb1a %>% 
+  select(researcher, institution, lab, country, continent) %>% 
+  arrange(researcher)
+
+summary_mb1a <- 
+  filter_mb1a %>% 
+  group_by(Latitude, Longitude) %>% 
+  summarise(
+    institution = paste(unique(institution), collapse = ", "),
+    researcher = paste(unique(researcher), collapse = ", ")
+  )
+
 # MB1B
-created_mb1b <- 
+filter_mb1b <- 
   mb_collaborators %>% 
   filter(studies == "MB1B") %>% 
   arrange(institution) 
 
+tab_mb1b <- 
+  filter_mb1b %>% 
+  select(researcher, institution, lab, country, continent) %>% 
+  arrange(researcher)
+
+summary_mb1b <- 
+  filter_mb1b %>% 
+  group_by(Latitude, Longitude) %>% 
+  summarise(
+    institution = paste(unique(institution), collapse = ", "),
+    researcher = paste(unique(researcher), collapse = ", ")
+  )
+
 # MB1L
-created_mb1l <- 
+filter_mb1l <- 
   mb_collaborators %>% 
   filter(studies == "MB1L") %>% 
   arrange(institution) 
 
+tab_mb1l <- 
+  filter_mb1l %>% 
+  select(researcher, institution, lab, country, continent) %>% 
+  arrange(researcher)
+
+summary_mb1l <- 
+  filter_mb1l %>% 
+  group_by(Latitude, Longitude) %>% 
+  summarise(
+    institution = paste(unique(institution), collapse = ", "),
+    researcher = paste(unique(researcher), collapse = ", ")
+  )
+
 # MB1N
-created_mb1n <- 
+filter_mb1n <- 
   mb_collaborators %>% 
   filter(studies == "MB1N") %>% 
   arrange(institution) 
 
+tab_mb1n <- 
+  filter_mb1n %>% 
+  select(researcher, institution, lab, country, continent) %>% 
+  arrange(researcher)
+
+summary_mb1n <- 
+  filter_mb1n %>% 
+  group_by(Latitude, Longitude) %>% 
+  summarise(
+    institution = paste(unique(institution), collapse = ", "),
+    researcher = paste(unique(researcher), collapse = ", ")
+  )
+
 # MB1T
-created_mb1t <- 
+filter_mb1t <- 
   mb_collaborators %>% 
   filter(studies == "MB1T") %>% 
   arrange(institution) 
 
+tab_mb1t <- 
+  filter_mb1t %>% 
+  select(researcher, institution, lab, country, continent) %>% 
+  arrange(researcher)
+
+summary_mb1t <- 
+  filter_mb1t %>% 
+  group_by(Latitude, Longitude) %>% 
+  summarise(
+    institution = paste(unique(institution), collapse = ", "),
+    researcher = paste(unique(researcher), collapse = ", ")
+  )
+
 # MB3N - empty for now
-created_mb3n <- 
+filter_mb3n <- 
   mb_collaborators %>% 
   filter(studies == "MB3N") %>% 
   arrange(institution) 
+
+tab_mb3n <- 
+  filter_mb3n %>% 
+  select(researcher, institution, lab, country, continent) %>% 
+  arrange(researcher)
+
+summary_mb3n <- 
+  filter_mb3n %>% 
+  group_by(Latitude, Longitude) %>% 
+  summarise(
+    institution = paste(unique(institution), collapse = ", "),
+    researcher = paste(unique(researcher), collapse = ", ")
+  )
