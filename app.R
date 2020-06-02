@@ -411,6 +411,14 @@ icons <- awesomeIcons(icon = "whatever",
                       library = "ion", 
                       markerColor = "blue") 
 
+## keep leaflet cluster "Green" regardless of size (looks better and avoid noise in the map)
+green_clusters <- JS("function (cluster) {    
+                      var childCount = cluster.getChildCount(); 
+                      var c = ' marker-cluster-';  
+                      c += 'small';
+                      return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) });
+                      }")
+
 # Pop-ups
 # global
 global_popups <- paste0("<b>", summary_global$institution, "</b>", "<br/>", 
@@ -485,15 +493,6 @@ mb3n_popups <- paste0("<b>", summary_mb3n$institution, "</b>", "<br/>",
 
 # SERVER CONFIG
 server <- function(input, output) { 
-  
-  # keep leaflet cluster "Green" regardless of size (looks better and avoid noise in the map)
-  green_clusters = JS("function (cluster) {    
-                      var childCount = cluster.getChildCount(); 
-                      var c = ' marker-cluster-';  
-                      c += 'small';
-                      return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) });
-                      }")
-    
   
   # global
   output$map <- renderLeaflet({               
