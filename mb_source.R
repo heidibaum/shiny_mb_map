@@ -31,7 +31,8 @@ library(countrycode)
 
 # load credentials
 options(
-  gargle_oauth_cache = ".secrets"
+  gargle_oauth_cache = ".secrets",
+  gargle_oauth_email = "dalbenwork2@gmail.com"
   )
 
 googlesheets4::gs4_auth()
