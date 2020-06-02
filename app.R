@@ -397,7 +397,7 @@ body <-
                   "and adapted by",
                   a("ManyBabies", href = "https://rodrigodalben.github.io/"), # update website
                   "You can find the source code",
-                  a("here.", href = "https://github.com/RodrigoDalBen/shiny_mb_map") # update if moved
+                  a("here.", href = "https://gith1ub.com/RodrigoDalBen/shiny_mb_map") # update if moved
                   ), 
                 img(src = "avatar-icon_cb.png", height = 200, width = 200)
                 )
