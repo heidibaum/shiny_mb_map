@@ -232,7 +232,7 @@ filter_mb1 <-
 
 tab_mb1 <- 
   filter_mb1 %>% 
-  select(researcher, institution, lab, country, continent) %>% 
+  select(researcher, institution, country, continent) %>% 
   arrange(researcher)
 
 summary_mb1 <- 
@@ -252,7 +252,7 @@ filter_mb2 <-
 
 tab_mb2 <- 
   filter_mb2 %>% 
-  select(researcher, institution, lab, country, continent) %>% 
+  select(researcher, institution, country, continent) %>% 
   arrange(researcher)
 
 summary_mb2 <- 
@@ -271,7 +271,7 @@ filter_mb3 <-
 
 tab_mb3 <- 
   filter_mb3 %>% 
-  select(researcher, institution, lab, country, continent) %>% 
+  select(researcher, institution, country, continent) %>% 
   arrange(researcher)
 
 summary_mb3 <- 
@@ -290,7 +290,7 @@ filter_mb4 <-
 
 tab_mb4 <- 
   filter_mb4 %>% 
-  select(researcher, institution, lab, country, continent) %>% 
+  select(researcher, institution, country, continent) %>% 
   arrange(researcher)
 
 summary_mb4 <- 
@@ -309,7 +309,7 @@ filter_mb5 <-
 
 tab_mb5 <- 
   filter_mb5 %>% 
-  select(researcher, institution, lab, country, continent) %>% 
+  select(researcher, institution, country, continent) %>% 
   arrange(researcher)
 
 summary_mb5 <- 
@@ -328,7 +328,7 @@ filter_mb_athome <-
 
 tab_mb_athome <- 
   filter_mb_athome %>% 
-  select(researcher, institution, lab, country, continent) %>% 
+  select(researcher, institution, country, continent) %>% 
   arrange(researcher)
 
 summary_mb_athome <- 
@@ -348,7 +348,7 @@ filter_mb1a <-
 
 tab_mb1a <- 
   filter_mb1a %>% 
-  select(researcher, institution, lab, country, continent) %>% 
+  select(researcher, institution, country, continent) %>% 
   arrange(researcher)
 
 summary_mb1a <- 
@@ -367,7 +367,7 @@ filter_mb1b <-
 
 tab_mb1b <- 
   filter_mb1b %>% 
-  select(researcher, institution, lab, country, continent) %>% 
+  select(researcher, institution, country, continent) %>% 
   arrange(researcher)
 
 summary_mb1b <- 
@@ -386,7 +386,7 @@ filter_mb1l <-
 
 tab_mb1l <- 
   filter_mb1l %>% 
-  select(researcher, institution, lab, country, continent) %>% 
+  select(researcher, institution, country, continent) %>% 
   arrange(researcher)
 
 summary_mb1l <- 
@@ -405,7 +405,7 @@ filter_mb1n <-
 
 tab_mb1n <- 
   filter_mb1n %>% 
-  select(researcher, institution, lab, country, continent) %>% 
+  select(researcher, institution, country, continent) %>% 
   arrange(researcher)
 
 summary_mb1n <- 
@@ -424,7 +424,7 @@ filter_mb1t <-
 
 tab_mb1t <- 
   filter_mb1t %>% 
-  select(researcher, institution, lab, country, continent) %>% 
+  select(researcher, institution, country, continent) %>% 
   arrange(researcher)
 
 summary_mb1t <- 
@@ -443,7 +443,7 @@ filter_mb3n <-
 
 tab_mb3n <- 
   filter_mb3n %>% 
-  select(researcher, institution, lab, country, continent) %>% 
+  select(researcher, institution, country, continent) %>% 
   arrange(researcher)
 
 summary_mb3n <- 

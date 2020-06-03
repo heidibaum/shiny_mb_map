@@ -5,9 +5,15 @@ library(leaflet)
 library(htmltools)
 library(DT)
 
+library(shinydashboardPlus)
+library(shinyjs)
+
 #####
 # To-do:
 # update webiste address
+#
+# Notes:
+# `setView(lat, lng, zoom)` is a quick-fix; delete as numbers of collaborators increase
 #
 #####
 
@@ -17,12 +23,15 @@ library(DT)
 ## UI CONFIG
 
 ## Header
-header <- dashboardHeader(title = "ManyBabies")
-
+#header <- dashboardHeader(title = "ManyBabies") ## backup
+header <- dashboardHeaderPlus(title = tags$a(href = "http://rodrigodalben.github.io/", # update
+                                             tags$img(src = "avatar-icon_cb.png", height = "32px"), 
+                                             "ManyBabies")) 
+                                
 # Sidebar content
 sidebar <- dashboardSidebar(
   sidebarMenu(
-    menuItem(text = "ManyBabies", tabName = "manybabies", icon = icon("user-graduate")), 
+    menuItem(text = "Overview", tabName = "manybabies", icon = icon("binoculars")), 
     menuItem(text = "By Study", tabName = "studies", icon = icon("graduation-cap")), # add other elements
     menuItem(text = "By Region", tabName = "region", icon = icon("globe")), 
     menuItem(text = "About", tabName = "about", icon = icon("heart"))
@@ -32,6 +41,21 @@ sidebar <- dashboardSidebar(
 ## Body content
 body <-   
   dashboardBody(
+    
+    
+    # test
+    tags$script(HTML("
+        var openTab = function(tabName){
+          $('a', $('.sidebar')).each(function() {
+            if(this.getAttribute('data-value') == tabName) {
+              this.click()
+            };
+          });
+        }
+      ")),
+    
+    
+    
     tabItems(
       
       # Front Page
@@ -39,29 +63,17 @@ body <-
       # First sidebar tab - ManyBabies
       tabItem(tabName = "manybabies",
               selected = TRUE, 
-        
-        fluidRow(
-          absolutePanel(style = "z-index: 2000", fixed = TRUE, draggable = TRUE,
-                        top = 10, left = "auto", right = 20, width = "250px",
-                        div(
-                          tags$a(target="_blank", 
-                                 href = "http://rodrigodalben.github.io/", # update
-                                 tags$img(src = "avatar-icon_cb.png", 
-                                          height = "35px", id = "logo") 
-                          )
-                        )
-          ),
-          # A static valueBox
-          valueBox(length(unique(mb_collaborators$studies)), "MB Studies", 
-                   icon = icon("graduation-cap", lib = "font-awesome"), width = 3), # add color if necessary
-          valueBox(length(unique(mb_collaborators$researcher)), "MB Collaborators", 
-                   icon("users", lib = "font-awesome"), width = 3),
-          valueBox(length(unique(mb_collaborators$institution)), "MB Institutions", 
-                   icon = icon("university", lib = "font-awesome"), width = 3),
-          valueBox(length(unique(mb_collaborators$country)), "MB Countries", 
-                   icon = icon("map-o", lib = "font-awesome"), width = 3)
-        ),
-        leafletOutput('map', height = 700)
+              
+              fluidRow(
+              # dynamic valuebox
+              valueBoxOutput("vb_studies", width = 3), 
+              valueBoxOutput("vb_collaborators", width = 3), 
+              valueBoxOutput("vb_institutions", width = 3), 
+              valueBoxOutput("vb_countries", width = 3)
+              ),
+              
+              # global map
+              leafletOutput('map', height = 700)
       ),
       
       
@@ -71,7 +83,7 @@ body <-
                          
                          tabPanel(title = 'North America',
                                   fluidRow(
-                                    column(width = 4,
+                                    column(width = 6,
                                       # A static valueBox
                                       valueBox(nrow(collab_nortam), 
                                                "ManyBabies collaborators in North America", 
@@ -79,7 +91,7 @@ body <-
                                       ),
                                       box("Created at", width = 18, DT::dataTableOutput("collab_nortam"))
                                     ),
-                                    column(width = 6,
+                                    column(width = 5,
                                       leafletOutput('map_nortam')
                                     )
                                   )
@@ -87,7 +99,7 @@ body <-
                          tabPanel(title = 'Latin America',
                                   fluidRow(
                                     column(
-                                      width = 4,
+                                      width = 6,
                                       # A static valueBox
                                       valueBox(nrow(collab_latam),
                                                "ManyBabies collaborators in Latin America", 
@@ -97,7 +109,7 @@ body <-
                                       )
                                     ),
                                     column(
-                                      width = 8,
+                                      width = 5,
                                       leafletOutput('map_latam')
                                       )
                                   )
@@ -105,7 +117,7 @@ body <-
                          tabPanel(title = 'Europe',
                                   fluidRow(
                                     column(
-                                      width = 4,
+                                      width = 6,
                                       # A static valueBox
                                       valueBox(nrow(collab_europe),
                                                "ManyBabies collaborators in Europe",
@@ -115,7 +127,7 @@ body <-
                                       )
                                     ),
                                     column(
-                                      width = 8,
+                                      width = 5,
                                       leafletOutput('map_europe')
                                       )
                                   )
@@ -123,7 +135,7 @@ body <-
                          tabPanel(title = 'Africa',
                                   fluidRow(
                                     column(
-                                      width = 4,
+                                      width = 6,
                                       # A static valueBox
                                       valueBox(nrow(collab_africa),
                                                "ManyBabies collaborators in Africa", 
@@ -133,14 +145,14 @@ body <-
                                       )
                                     ),
                                     column(
-                                      width = 8,
+                                      width = 5,
                                       leafletOutput('map_africa'))
                                   )
                          ),
                          tabPanel(title = 'Asia',
                                   fluidRow(
                                     column(
-                                      width = 4,
+                                      width = 6,
                                       # A static valueBox
                                       valueBox(nrow(collab_asia),
                                                "ManyBabies collaborators in Asia",
@@ -150,14 +162,14 @@ body <-
                                       )
                                     ),
                                     column(
-                                      width = 8,
+                                      width = 5,
                                       leafletOutput('map_asia'))
                                   )
                          ),
                          tabPanel(title = 'Oceania',
                                   fluidRow(
                                     column(
-                                      width = 4,
+                                      width = 6,
                                       # A static valueBox
                                       valueBox(nrow(collab_oceania),
                                                "ManyBabies collaborators in Oceania",
@@ -167,7 +179,7 @@ body <-
                                       )
                                     ),
                                     column(
-                                      width = 8,
+                                      width = 5,
                                       leafletOutput('map_oceania'))
                                   )
                          )
@@ -179,23 +191,23 @@ body <-
                          
                          tabPanel(title = 'MB1',
                                   fluidRow(
-                                    column(width = 5,
+                                    column(width = 6,
                                            # A static valueBox
                                            valueBox(nrow(tab_mb1), 
                                                     "ManyBabies collaborators in MB1", 
                                                     icon = icon("glyphicon-blackboard"), width = 18
                                            ),
-                                           box("Created at", width = 18, DT::dataTableOutput("tab_mb1")) # table output - CREATE ON NEXT CHUNK
+                                           box("Created at", width = 18, DT::dataTableOutput("tab_mb1"))
                                     ),
-                                    column(width = 6,
-                                           leafletOutput('map_mb1') # map output - CREATE ON NEXT CHUNK
+                                    column(width = 5,
+                                           leafletOutput('map_mb1')
                                     )
                                   )
                          ),
                          tabPanel(title = 'MB2',
                                   fluidRow(
                                     column(
-                                      width = 5,
+                                      width = 6,
                                       # A static valueBox
                                       valueBox(nrow(tab_mb2),
                                                "ManyBabies collaborators in MB2", 
@@ -205,7 +217,7 @@ body <-
                                       )
                                     ),
                                     column(
-                                      width = 6,
+                                      width = 5,
                                       leafletOutput('map_mb2')
                                     )
                                   )
@@ -213,7 +225,7 @@ body <-
                          tabPanel(title = 'MB3',
                                   fluidRow(
                                     column(
-                                      width = 5,
+                                      width = 6,
                                       # A static valueBox
                                       valueBox(nrow(tab_mb3),
                                                "ManyBabies collaborators in MB3",
@@ -223,7 +235,7 @@ body <-
                                       )
                                     ),
                                     column(
-                                      width = 6,
+                                      width = 5,
                                       leafletOutput('map_mb3')
                                     )
                                   )
@@ -231,7 +243,7 @@ body <-
                          tabPanel(title = 'MB4',
                                   fluidRow(
                                     column(
-                                      width = 5,
+                                      width = 6,
                                       # A static valueBox
                                       valueBox(nrow(tab_mb4),
                                                "ManyBabies collaborators in MB4", 
@@ -241,14 +253,14 @@ body <-
                                       )
                                     ),
                                     column(
-                                      width = 6,
+                                      width = 5,
                                       leafletOutput('map_mb4'))
                                   )
                          ),
                          tabPanel(title = 'MB5',
                                   fluidRow(
                                     column(
-                                      width = 5,
+                                      width = 6,
                                       # A static valueBox
                                       valueBox(nrow(tab_mb5),
                                                "ManyBabies collaborators in MB5",
@@ -258,14 +270,14 @@ body <-
                                       )
                                     ),
                                     column(
-                                      width = 6,
+                                      width = 5,
                                       leafletOutput('map_mb5'))
                                   )
                          ),
                          tabPanel(title = 'MB-AtHome',
                                   fluidRow(
                                     column(
-                                      width = 5,
+                                      width = 6,
                                       # A static valueBox
                                       valueBox(nrow(tab_mb_athome),
                                                "ManyBabies collaborators in MB-AtHome",
@@ -275,14 +287,14 @@ body <-
                                       )
                                     ),
                                     column(
-                                      width = 6,
+                                      width = 5,
                                       leafletOutput('map_mb_athome'))
                                   )
                          ),
                          tabPanel(title = 'MB1A',
                                   fluidRow(
                                     column(
-                                      width = 5,
+                                      width = 6,
                                       # A static valueBox
                                       valueBox(nrow(tab_mb1a),
                                                "ManyBabies collaborators in MB1A",
@@ -292,14 +304,14 @@ body <-
                                       )
                                     ),
                                     column(
-                                      width = 6,
+                                      width = 5,
                                       leafletOutput('map_mb1a'))
                                   )
                          ),
                          tabPanel(title = 'MB1B',
                                   fluidRow(
                                     column(
-                                      width = 5,
+                                      width = 6,
                                       # A static valueBox
                                       valueBox(nrow(tab_mb1b),
                                                "ManyBabies collaborators in MB1B",
@@ -309,14 +321,14 @@ body <-
                                       )
                                     ),
                                     column(
-                                      width = 6,
+                                      width = 5,
                                       leafletOutput('map_mb1b'))
                                   )
                          ),
                          tabPanel(title = 'MB1L',
                                   fluidRow(
                                     column(
-                                      width = 5,
+                                      width = 6,
                                       # A static valueBox
                                       valueBox(nrow(tab_mb1l),
                                                "ManyBabies collaborators in MB1L",
@@ -326,14 +338,14 @@ body <-
                                       )
                                     ),
                                     column(
-                                      width = 6,
+                                      width = 5,
                                       leafletOutput('map_mb1l'))
                                   )
                          ),
                          tabPanel(title = 'MB1N',
                                   fluidRow(
                                     column(
-                                      width = 5,
+                                      width = 6,
                                       # A static valueBox
                                       valueBox(nrow(tab_mb1n),
                                                "ManyBabies collaborators in MB1N",
@@ -343,14 +355,14 @@ body <-
                                       )
                                     ),
                                     column(
-                                      width = 6,
+                                      width = 5,
                                       leafletOutput('map_mb1n'))
                                   )
                          ),
                          tabPanel(title = 'MB1T',
                                   fluidRow(
                                     column(
-                                      width = 5,
+                                      width = 6,
                                       # A static valueBox
                                       valueBox(nrow(tab_mb1t),
                                                "ManyBabies collaborators in MB1T",
@@ -360,14 +372,14 @@ body <-
                                       )
                                     ),
                                     column(
-                                      width = 6,
+                                      width = 5,
                                       leafletOutput('map_mb1t'))
                                   )
                          ),
                          tabPanel(title = 'MB3N',
                                   fluidRow(
                                     column(
-                                      width = 5,
+                                      width = 6,
                                       # A static valueBox
                                       valueBox(nrow(tab_mb3n),
                                                "ManyBabies collaborators in MB3N",
@@ -377,7 +389,7 @@ body <-
                                       )
                                     ),
                                     column(
-                                      width = 6,
+                                      width = 5,
                                       leafletOutput('map_mb3n'))
                                   )
                          )
@@ -404,14 +416,10 @@ body <-
       )))
 
 # ui aesthetics
-ui <- dashboardPage(skin = "black", header, sidebar, body)
+#ui <- dashboardPage(skin = "black", header, sidebar, body) backup
 
-icons <- awesomeIcons(icon = "whatever",
-                      iconColor = "black",
-                      library = "ion", 
-                      markerColor = "blue") 
+ui <- dashboardPagePlus(skin = "black", header, sidebar, body, useShinyjs())
 
-## keep leaflet cluster "Green" regardless of size (looks better and avoid noise in the map)
 green_clusters <- JS("function (cluster) {    
                       var childCount = cluster.getChildCount(); 
                       var c = ' marker-cluster-';  
@@ -493,15 +501,73 @@ mb3n_popups <- paste0("<b>", summary_mb3n$institution, "</b>", "<br/>",
 
 # SERVER CONFIG
 server <- function(input, output) { 
+
+  
+    
+  output$vb_studies <- renderValueBox({
+    valueBox(length(unique(mb_collaborators$studies)),
+             HTML("<a style=color:white; onclick = openTab('studies'); 
+                  href= \"#\">MB Studies</a>"),
+             icon = icon("graduation-cap", lib = "font-awesome"), width = 3,
+             color = "light-blue"
+             )
+  })
+  
+  
+
+  #valueBox(length(unique(mb_collaborators$researcher)), "MB Collaborators", 
+    #       icon("users", lib = "font-awesome"), width = 3),
+  #valueBox(length(unique(mb_collaborators$institution)), "MB Institutions", 
+   #        icon = icon("university", lib = "font-awesome"), width = 3),
+  #valueBox(length(unique(mb_collaborators$country)), "MB Countries", 
+  #         icon = icon("map-o", lib = "font-awesome"), width = 3)
+  #),
+  
+  
+  output$vb_collaborators <- renderValueBox({
+    valueBox(length(unique(mb_collaborators$researcher)),
+             HTML("<a style=color:white; onclick = openTab('studies'); 
+                  href= \"#\">MB Collaborators</a>"),
+             icon = icon("users", lib = "font-awesome"), width = 3,
+             color = "blue"
+    )
+  })
+  
+  output$vb_institutions <- renderValueBox({
+    valueBox(length(unique(mb_collaborators$institution)),
+             HTML("<a style=color:white; onclick = openTab('region'); 
+                  href= \"#\">MB Institutions</a>"),
+             icon = icon("university", lib = "font-awesome"), width = 3,
+             color = "yellow"
+    )
+  })
+
+  output$vb_countries <- renderValueBox({
+    valueBox(length(unique(mb_collaborators$country)),
+             HTML("<a style=color:white; onclick = openTab('region'); 
+                  href= \"#\">MB Countries</a>"),
+             icon = icon("map-o", lib = "font-awesome"), width = 3,
+             color = "green"
+    )
+  })
+
+  
+  
+  # collapse sidebar
+  addClass(selector = "body", class = "sidebar-collapse")
   
   # global
   output$map <- renderLeaflet({               
-    leaflet(summary_global) %>% 
+    leaflet(summary_global,
+            options = leafletOptions(zoomControl = FALSE)
+            ) %>% 
       addTiles() %>%
-      addCircleMarkers(~Longitude, ~Latitude, popup = global_popups,
-                       color = ~ "#6ecc39", # small cluster default green
+      addCircleMarkers(~Longitude, ~Latitude, 
+                       label = purrr::map(global_popups, htmltools::HTML),
+                       labelOptions = labelOptions(textsize = "12px"),
+                       color = ~ "#6ecc39", 
                        radius = 7,
-                       fillOpacity = 1,
+                       fillOpacity = 0.8,
                        clusterOptions = 
                          markerClusterOptions(maxClusterRadius = 30,
                                               iconCreateFunction = green_clusters
@@ -513,10 +579,12 @@ server <- function(input, output) {
   output$map_nortam <- renderLeaflet({
     leaflet(summary_nortam) %>% 
       addTiles() %>%
-      addCircleMarkers(~Longitude, ~Latitude, popup = nortam_popups,
+      addCircleMarkers(~Longitude, ~Latitude, 
+                       label = purrr::map(nortam_popups, htmltools::HTML),
+                       labelOptions = labelOptions(textsize = "12px"),
                        color = ~ "#6ecc39",
                        radius = 7,
-                       fillOpacity = 1,
+                       fillOpacity = 0.8,
                        clusterOptions =
                          markerClusterOptions(maxClusterRadius = 30,
                                               iconCreateFunction = green_clusters
@@ -526,62 +594,78 @@ server <- function(input, output) {
   output$map_latam <- renderLeaflet({
     leaflet(summary_latam) %>% 
       addTiles() %>%
-      addCircleMarkers(~Longitude, ~Latitude, popup = latam_popups,
+      setView(lat = 6.664608, lng = -93.889068, zoom = 3) %>% 
+      addCircleMarkers(~Longitude, ~Latitude, 
+                       label = purrr::map(latam_popups, htmltools::HTML),
+                       labelOptions = labelOptions(textsize = "12px"),
                        color = ~ "#6ecc39",
                        radius = 7,
-                       fillOpacity = 1,
-                 clusterOptions = 
-                   markerClusterOptions(maxClusterRadius = 30,
-                                        iconCreateFunction = green_clusters
+                       fillOpacity = 0.8,
+                       clusterOptions = 
+                         markerClusterOptions(maxClusterRadius = 30,
+                                              iconCreateFunction = green_clusters
                                               ))
   })
   output$collab_europe <- DT::renderDataTable({collab_europe})
   output$map_europe <- renderLeaflet({
     leaflet(summary_europe) %>%
       addTiles() %>%
-      addCircleMarkers(~Longitude, ~Latitude, popup = europe_popups,
+      addCircleMarkers(~Longitude, ~Latitude, 
+                       label = purrr::map(europe_popups, htmltools::HTML),
+                       labelOptions = labelOptions(textsize = "12px"),
                        color = ~ "#6ecc39",
                        radius = 7,
-                       fillOpacity = 1,
-                       clusterOptions = markerClusterOptions(maxClusterRadius = 30,
-                                                             iconCreateFunction = green_clusters
-                                                             ))
+                       fillOpacity = 0.8,
+                       clusterOptions = 
+                         markerClusterOptions(maxClusterRadius = 30,
+                                              iconCreateFunction = green_clusters
+                                              ))
   })
   output$collab_africa <- DT::renderDataTable({collab_africa})
   output$map_africa <- renderLeaflet({
     leaflet(summary_africa) %>% 
       addTiles() %>%
-      addCircleMarkers(~Longitude, ~Latitude, popup = africa_popups,
+      addCircleMarkers(~Longitude, ~Latitude,
+                       label = purrr::map(africa_popups, htmltools::HTML),
+                       labelOptions = labelOptions(textsize = "12px"),
                        color = ~ "#6ecc39",
                        radius = 7,
-                       fillOpacity = 1,
-                 clusterOptions = markerClusterOptions(maxClusterRadius = 30,
-                                                       iconCreateFunction = green_clusters
-                 )) 
+                       fillOpacity = 0.8,
+                       clusterOptions = 
+                         markerClusterOptions(maxClusterRadius = 30,
+                                              iconCreateFunction = green_clusters
+                                              )) 
   })
   output$collab_asia <- DT::renderDataTable({collab_asia})
   output$map_asia <- renderLeaflet({
     leaflet(summary_asia) %>% 
       addTiles() %>%
-      addCircleMarkers(~Longitude, ~Latitude, popup = asia_popups,
+      addCircleMarkers(~Longitude, ~Latitude,
+                       label = purrr::map(asia_popups, htmltools::HTML),
+                       labelOptions = labelOptions(textsize = "12px"),
                        color = ~ "#6ecc39",
                        radius = 7,
-                       fillOpacity = 1,
-                 clusterOptions = markerClusterOptions(maxClusterRadius = 30,
-                                                       iconCreateFunction = green_clusters
-                 )) 
+                       fillOpacity = 0.8,
+                       clusterOptions = 
+                         markerClusterOptions(maxClusterRadius = 30,
+                                              iconCreateFunction = green_clusters
+                                              )) 
   })
   output$collab_oceania <- DT::renderDataTable({collab_oceania})
   output$map_oceania <- renderLeaflet({
     leaflet(summary_oceania) %>% 
       addTiles() %>%
-      addCircleMarkers(~Longitude, ~Latitude, popup = oceania_popups,
+      setView(lat = -33.431441, lng = 148.313572, zoom = 3) %>% 
+      addCircleMarkers(~Longitude, ~Latitude, 
+                       label = purrr::map(oceania_popups, htmltools::HTML),
+                       labelOptions = labelOptions(textsize = "12px"),
                        color = ~ "#6ecc39",
                        radius = 7,
-                       fillOpacity = 1,
-                 clusterOptions = markerClusterOptions(maxClusterRadius = 30,
-                                                       iconCreateFunction = green_clusters
-                 )) 
+                       fillOpacity = 0.8,
+                       clusterOptions = 
+                         markerClusterOptions(maxClusterRadius = 30,
+                                              iconCreateFunction = green_clusters
+                                              )) 
   })
   
   # study
@@ -589,155 +673,183 @@ server <- function(input, output) {
   output$map_mb1 <- renderLeaflet({
     leaflet(summary_mb1) %>% 
       addTiles() %>%
-      addCircleMarkers(~Longitude, ~Latitude, popup = mb1_popups,
+      addCircleMarkers(~Longitude, ~Latitude, 
+                       label = purrr::map(mb1_popups, htmltools::HTML),
+                       labelOptions = labelOptions(textsize = "12px"),
                        color = ~ "#6ecc39",
                        radius = 7,
-                       fillOpacity = 1,
-                 clusterOptions = markerClusterOptions(maxClusterRadius = 30,
-                                                       iconCreateFunction = green_clusters
-                 ))  
+                       fillOpacity = 0.8,
+                       clusterOptions = markerClusterOptions(
+                         maxClusterRadius = 30,
+                         iconCreateFunction = green_clusters
+                         ))  
   })
   output$tab_mb2 <- DT::renderDataTable({tab_mb2})
   output$map_mb2 <- renderLeaflet({
     leaflet(summary_mb2) %>% 
       addTiles() %>%
-      addCircleMarkers(~Longitude, ~Latitude, popup = mb2_popups,
+      addCircleMarkers(~Longitude, ~Latitude,
+                       label = purrr::map(mb2_popups, htmltools::HTML),
+                       labelOptions = labelOptions(textsize = "12px"),
                        color = ~ "#6ecc39",
                        radius = 7,
-                       fillOpacity = 1,
-                 clusterOptions = markerClusterOptions(maxClusterRadius = 30,
-                                                       iconCreateFunction = green_clusters
-                 ))  
+                       fillOpacity = 0.8,
+                       clusterOptions = 
+                         markerClusterOptions(maxClusterRadius = 30,
+                                              iconCreateFunction = green_clusters
+                                              ))  
   })
   output$tab_mb3 <- DT::renderDataTable({tab_mb3})
   output$map_mb3 <- renderLeaflet({
     leaflet(summary_mb3) %>% 
       addTiles() %>%
-      addCircleMarkers(~Longitude, ~Latitude, popup = mb3_popups,
+      addCircleMarkers(~Longitude, ~Latitude,
+                       label = purrr::map(mb3_popups, htmltools::HTML),
+                       labelOptions = labelOptions(textsize = "12px"),
                        color = ~ "#6ecc39",
                        radius = 7,
-                       fillOpacity = 1,
-                 clusterOptions = markerClusterOptions(maxClusterRadius = 30,
-                                                       iconCreateFunction = green_clusters
-                 )) 
+                       fillOpacity = 0.8,
+                       clusterOptions = 
+                         markerClusterOptions(maxClusterRadius = 30,
+                                              iconCreateFunction = green_clusters
+                                              )) 
   })
   output$tab_mb4 <- DT::renderDataTable({tab_mb4})
   output$map_mb4 <- renderLeaflet({
     leaflet(summary_mb4) %>% 
       addTiles() %>%
-      addCircleMarkers(~Longitude, ~Latitude, popup = mb4_popups,
+      addCircleMarkers(~Longitude, ~Latitude,
+                       label = purrr::map(mb4_popups, htmltools::HTML),
+                       labelOptions = labelOptions(textsize = "12px"),
                        color = ~ "#6ecc39",
                        radius = 7,
-                       fillOpacity = 1,
-                 clusterOptions = markerClusterOptions(maxClusterRadius = 30,
-                                                       iconCreateFunction = green_clusters
-                 )) 
+                       fillOpacity = 0.8,
+                       clusterOptions = 
+                         markerClusterOptions(maxClusterRadius = 30,
+                                              iconCreateFunction = green_clusters
+                                              )) 
   })
   output$tab_mb5 <- DT::renderDataTable({tab_mb5})
   output$map_mb5 <- renderLeaflet({
     leaflet(summary_mb5) %>% 
       addTiles() %>%
-      addCircleMarkers(~Longitude, ~Latitude, popup = mb5_popups,
+      addCircleMarkers(~Longitude, ~Latitude, 
+                       label = purrr::map(mb5_popups, htmltools::HTML),
+                       labelOptions = labelOptions(textsize = "12px"),
                        color = ~ "#6ecc39",
                        radius = 7,
-                       fillOpacity = 1,
-                 clusterOptions = markerClusterOptions(maxClusterRadius = 30,
-                                                       iconCreateFunction = green_clusters
-                 ))  
+                       fillOpacity = 0.8,
+                       clusterOptions = 
+                         markerClusterOptions(maxClusterRadius = 30,
+                                              iconCreateFunction = green_clusters
+                                              ))  
   })
   output$tab_mb_athome <- DT::renderDataTable({tab_mb_athome})
   output$map_mb_athome <- renderLeaflet({
     leaflet(summary_mb_athome) %>% 
       addTiles() %>%
-      addCircleMarkers(~Longitude, ~Latitude, popup = mb_athome_popups,
+      addCircleMarkers(~Longitude, ~Latitude, 
+                       label = purrr::map(mb_athome_popups, htmltools::HTML),
+                       labelOptions = labelOptions(textsize = "12px"),
                        color = ~ "#6ecc39",
                        radius = 7,
-                       fillOpacity = 1,
-                 clusterOptions = markerClusterOptions(maxClusterRadius = 30,
-                                                       iconCreateFunction = green_clusters
-                 )) 
+                       fillOpacity = 0.8,
+                       clusterOptions = 
+                         markerClusterOptions(maxClusterRadius = 30,
+                                              iconCreateFunction = green_clusters
+                                              )) 
   })
   output$tab_mb1a <- DT::renderDataTable({tab_mb1a})
   output$map_mb1a <- renderLeaflet({
     leaflet(summary_mb1a) %>% 
       addTiles() %>%
-      addCircleMarkers(~Longitude, ~Latitude, popup = mb1a_popups,
+      addCircleMarkers(~Longitude, ~Latitude, 
+                       label = purrr::map(mb1a_popups, htmltools::HTML),
+                       labelOptions = labelOptions(textsize = "12px"),
                        color = ~ "#6ecc39",
                        radius = 7,
-                       fillOpacity = 1,
-                 clusterOptions = markerClusterOptions(maxClusterRadius = 30,
-                                                       iconCreateFunction = green_clusters
-                 )) 
+                       fillOpacity = 0.8,
+                       clusterOptions = 
+                         markerClusterOptions(maxClusterRadius = 30,
+                                              iconCreateFunction = green_clusters
+                                              )) 
   })
   output$tab_mb1b <- DT::renderDataTable({tab_mb1b})
   output$map_mb1b <- renderLeaflet({
     leaflet(summary_mb1b) %>% 
       addTiles() %>%
-      addCircleMarkers(~Longitude, ~Latitude, popup = mb1b_popups,
+      addCircleMarkers(~Longitude, ~Latitude, 
+                       label = purrr::map(mb1b_popups, htmltools::HTML),
+                       labelOptions = labelOptions(textsize = "12px"),
                        color = ~ "#6ecc39",
                        radius = 7,
-                       fillOpacity = 1,
-                 clusterOptions = markerClusterOptions(maxClusterRadius = 30,
-                                                       iconCreateFunction = green_clusters
-                 )) 
+                       fillOpacity = 0.8,
+                       clusterOptions = 
+                         markerClusterOptions(maxClusterRadius = 30,
+                                              iconCreateFunction = green_clusters
+                                              )) 
   })
   output$tab_mb1l <- DT::renderDataTable({tab_mb1l})
   output$map_mb1l <- renderLeaflet({
     leaflet(summary_mb1l) %>% 
       addTiles() %>%
-      addCircleMarkers(~Longitude, ~Latitude, popup = mb1l_popups,
+      addCircleMarkers(~Longitude, ~Latitude, 
+                       label = purrr::map(mb1l_popups, htmltools::HTML),
+                       labelOptions = labelOptions(textsize = "12px"),
                        color = ~ "#6ecc39",
                        radius = 7,
-                       fillOpacity = 1,
-                 clusterOptions = markerClusterOptions(maxClusterRadius = 30,
-                                                       iconCreateFunction = green_clusters
-                 )) 
+                       fillOpacity = 0.8,
+                       clusterOptions = 
+                         markerClusterOptions(maxClusterRadius = 30,
+                                              iconCreateFunction = green_clusters
+                                              )) 
   })
   output$tab_mb1n <- DT::renderDataTable({tab_mb1n})
   output$map_mb1n <- renderLeaflet({
     leaflet(summary_mb1n) %>% 
       addTiles() %>%
-      addCircleMarkers(~Longitude, ~Latitude, popup = mb1n_popups,
+      addCircleMarkers(~Longitude, ~Latitude, 
+                       label = purrr::map(mb1n_popups, htmltools::HTML),
+                       labelOptions = labelOptions(textsize = "12px"),
                        color = ~ "#6ecc39",
                        radius = 7,
-                       fillOpacity = 1,
-                 clusterOptions = markerClusterOptions(maxClusterRadius = 30,
-                                                       iconCreateFunction = green_clusters
-                 ))  
+                       fillOpacity = 0.8,
+                       clusterOptions = 
+                         markerClusterOptions(maxClusterRadius = 30,
+                                              iconCreateFunction = green_clusters
+                                              ))  
   })
   output$tab_mb1t <- DT::renderDataTable({tab_mb1t})
   output$map_mb1t <- renderLeaflet({
     leaflet(summary_mb1t) %>% 
       addTiles() %>%
-      addCircleMarkers(~Longitude, ~Latitude, popup = mb1t_popups,
+      addCircleMarkers(~Longitude, ~Latitude, 
+                       label = purrr::map(mb1t_popups, htmltools::HTML),
+                       labelOptions = labelOptions(textsize = "12px"),
                        color = ~ "#6ecc39",
                        radius = 7,
-                       fillOpacity = 1,
-                 clusterOptions = markerClusterOptions(maxClusterRadius = 30,
-                                                       iconCreateFunction = green_clusters
-                 )) 
+                       fillOpacity = 0.8,
+                       clusterOptions = 
+                         markerClusterOptions(maxClusterRadius = 30,
+                                              iconCreateFunction = green_clusters
+                                              )) 
   })
   output$tab_mb3n <- DT::renderDataTable({tab_mb3n})
   output$map_mb3n <- renderLeaflet({
     leaflet(summary_mb3n) %>% 
       addTiles() %>%
-      addCircleMarkers(~Longitude, ~Latitude, popup = mb3n_popups,
+      addCircleMarkers(~Longitude, ~Latitude,
+                       label = purrr::map(mb3n_popups, htmltools::HTML),
+                       labelOptions = labelOptions(textsize = "12px"),
                        color = ~ "#6ecc39",
                        radius = 7,
-                       fillOpacity = 1,
-                 clusterOptions = markerClusterOptions(maxClusterRadius = 30,
-                                                       iconCreateFunction = green_clusters
-                 )) 
+                       fillOpacity = 0.8,
+                       clusterOptions = 
+                         markerClusterOptions(maxClusterRadius = 30,
+                                              iconCreateFunction = green_clusters
+                                              )) 
   })
   
   }
 
 shinyApp(ui, server)
-
-
-
-
-
-
-
-
