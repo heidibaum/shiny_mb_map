@@ -93,7 +93,8 @@ body <-
                                       # A static valueBox
                                       valueBox(nrow(collab_nortam), 
                                                "ManyBabies collaborators in North America", 
-                                               icon = icon("glyphicon-blackboard"), width = 18
+                                               icon = icon("glyphicon-blackboard"), width = 18,
+                                               color = "green"
                                       ),
                                       box("Created at", width = 18, DT::dataTableOutput("collab_nortam")
                                           )
@@ -110,7 +111,8 @@ body <-
                                       # A static valueBox
                                       valueBox(nrow(collab_latam),
                                                "ManyBabies collaborators in Latin America", 
-                                               icon = icon("glyphicon-blackboard"), width = 18
+                                               icon = icon("glyphicon-blackboard"), width = 18,
+                                               color = "green"
                                       ),
                                       box("Created at", width = 18, DT::dataTableOutput("collab_latam")
                                       )
@@ -128,7 +130,8 @@ body <-
                                       # A static valueBox
                                       valueBox(nrow(collab_europe),
                                                "ManyBabies collaborators in Europe",
-                                               icon = icon("glyphicon-blackboard"), width = 18
+                                               icon = icon("glyphicon-blackboard"), width = 18,
+                                               color = "green"
                                       ),
                                       box("Created at", width = 18, DT::dataTableOutput("collab_europe")
                                       )
@@ -146,7 +149,8 @@ body <-
                                       # A static valueBox
                                       valueBox(nrow(collab_africa),
                                                "ManyBabies collaborators in Africa", 
-                                               icon = icon("glyphicon-blackboard"), width = 18
+                                               icon = icon("glyphicon-blackboard"), width = 18,
+                                               color = "green"
                                       ),
                                       box("Created at", width = 18, DT::dataTableOutput("collab_africa")
                                       )
@@ -163,7 +167,8 @@ body <-
                                       # A static valueBox
                                       valueBox(nrow(collab_asia),
                                                "ManyBabies collaborators in Asia",
-                                               icon = icon("glyphicon-blackboard"), width = 18
+                                               icon = icon("glyphicon-blackboard"), width = 18,
+                                               color = "green"
                                       ),
                                       box("Created at", width = 18, DT::dataTableOutput("collab_asia")
                                       )
@@ -180,7 +185,8 @@ body <-
                                       # A static valueBox
                                       valueBox(nrow(collab_oceania),
                                                "ManyBabies collaborators in Oceania",
-                                               icon = icon("glyphicon-blackboard"), width = 18
+                                               icon = icon("glyphicon-blackboard"), width = 18,
+                                               color = "green"
                                       ),
                                       box("Created at", width = 18, DT::dataTableOutput("collab_oceania")
                                       )
@@ -203,7 +209,8 @@ body <-
                                            # A static valueBox
                                            valueBox(nrow(tab_mb1), 
                                                     "ManyBabies collaborators in MB1", 
-                                                    icon = icon("glyphicon-blackboard"), width = 18
+                                                    icon = icon("glyphicon-blackboard"), width = 18,
+                                                    color = "blue"
                                            ),
                                            box("Created at", width = 18, DT::dataTableOutput("tab_mb1"))
                                     ),
@@ -219,7 +226,8 @@ body <-
                                       # A static valueBox
                                       valueBox(nrow(tab_mb2),
                                                "ManyBabies collaborators in MB2", 
-                                               icon = icon("glyphicon-blackboard"), width = 18
+                                               icon = icon("glyphicon-blackboard"), width = 18,
+                                               color = "blue"
                                       ),
                                       box("Created at", width = 18, DT::dataTableOutput("tab_mb2")
                                       )
@@ -237,7 +245,8 @@ body <-
                                       # A static valueBox
                                       valueBox(nrow(tab_mb3),
                                                "ManyBabies collaborators in MB3",
-                                               icon = icon("glyphicon-blackboard"), width = 18
+                                               icon = icon("glyphicon-blackboard"), width = 18,
+                                               color = "blue"
                                       ),
                                       box("Created at", width = 18, DT::dataTableOutput("tab_mb3")
                                       )
@@ -255,7 +264,8 @@ body <-
                                       # A static valueBox
                                       valueBox(nrow(tab_mb4),
                                                "ManyBabies collaborators in MB4", 
-                                               icon = icon("glyphicon-blackboard"), width = 18
+                                               icon = icon("glyphicon-blackboard"), width = 18,
+                                               color = "blue"
                                       ),
                                       box("Created at", width = 18, DT::dataTableOutput("tab_mb4")
                                       )
@@ -272,7 +282,8 @@ body <-
                                       # A static valueBox
                                       valueBox(nrow(tab_mb5),
                                                "ManyBabies collaborators in MB5",
-                                               icon = icon("glyphicon-blackboard"), width = 18
+                                               icon = icon("glyphicon-blackboard"), width = 18,
+                                               color = "blue"
                                       ),
                                       box("Created at", width = 18, DT::dataTableOutput("tab_mb5")
                                       )
@@ -289,7 +300,8 @@ body <-
                                       # A static valueBox
                                       valueBox(nrow(tab_mb_athome),
                                                "ManyBabies collaborators in MB-AtHome",
-                                               icon = icon("glyphicon-blackboard"), width = 18
+                                               icon = icon("glyphicon-blackboard"), width = 18,
+                                               color = "blue"
                                       ),
                                       box("Created at", width = 18, DT::dataTableOutput("tab_mb_athome")
                                       )
@@ -306,7 +318,8 @@ body <-
                                       # A static valueBox
                                       valueBox(nrow(tab_mb1a),
                                                "ManyBabies collaborators in MB1A",
-                                               icon = icon("glyphicon-blackboard"), width = 18
+                                               icon = icon("glyphicon-blackboard"), width = 18,
+                                               color = "blue"
                                       ),
                                       box("Created at", width = 18, DT::dataTableOutput("tab_mb1a")
                                       )
@@ -323,7 +336,8 @@ body <-
                                       # A static valueBox
                                       valueBox(nrow(tab_mb1b),
                                                "ManyBabies collaborators in MB1B",
-                                               icon = icon("glyphicon-blackboard"), width = 18
+                                               icon = icon("glyphicon-blackboard"), width = 18,
+                                               color = "blue"
                                       ),
                                       box("Created at", width = 18, DT::dataTableOutput("tab_mb1b")
                                       )
@@ -340,7 +354,8 @@ body <-
                                       # A static valueBox
                                       valueBox(nrow(tab_mb1l),
                                                "ManyBabies collaborators in MB1L",
-                                               icon = icon("glyphicon-blackboard"), width = 18
+                                               icon = icon("glyphicon-blackboard"), width = 18,
+                                               color = "blue"
                                       ),
                                       box("Created at", width = 18, DT::dataTableOutput("tab_mb1l")
                                       )
@@ -357,7 +372,8 @@ body <-
                                       # A static valueBox
                                       valueBox(nrow(tab_mb1n),
                                                "ManyBabies collaborators in MB1N",
-                                               icon = icon("glyphicon-blackboard"), width = 18
+                                               icon = icon("glyphicon-blackboard"), width = 18,
+                                               color = "blue"
                                       ),
                                       box("Created at", width = 18, DT::dataTableOutput("tab_mb1n")
                                       )
@@ -374,7 +390,8 @@ body <-
                                       # A static valueBox
                                       valueBox(nrow(tab_mb1t),
                                                "ManyBabies collaborators in MB1T",
-                                               icon = icon("glyphicon-blackboard"), width = 18
+                                               icon = icon("glyphicon-blackboard"), width = 18,
+                                               color = "blue"
                                       ),
                                       box("Created at", width = 18, DT::dataTableOutput("tab_mb1t")
                                       )
@@ -391,7 +408,8 @@ body <-
                                       # A static valueBox
                                       valueBox(nrow(tab_mb3n),
                                                "ManyBabies collaborators in MB3N",
-                                               icon = icon("glyphicon-blackboard"), width = 18
+                                               icon = icon("glyphicon-blackboard"), width = 18,
+                                               color = "blue"
                                       ),
                                       box("Created at", width = 18, DT::dataTableOutput("tab_mb3n")
                                       )
