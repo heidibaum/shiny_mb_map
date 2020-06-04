@@ -4,7 +4,6 @@ library(shiny)
 library(leaflet)
 library(htmltools)
 library(DT)
-
 library(shinydashboardPlus)
 library(shinyjs)
 
@@ -14,7 +13,12 @@ library(shinyjs)
 #
 # Notes:
 # `setView(lat, lng, zoom)` is a quick-fix; delete as numbers of collaborators increase
-#
+# 
+# Known issues:
+#   - logo is slighty misaligned in collapsed bar
+#   - navbar overlays sidbar popups
+#   - Data table and map overlaps on small screens
+# 
 #####
 
 
@@ -23,16 +27,16 @@ library(shinyjs)
 ## UI CONFIG
 
 ## Header
-#header <- dashboardHeader(title = "ManyBabies") ## backup
 header <- dashboardHeaderPlus(title = tags$a(href = "http://rodrigodalben.github.io/", # update
-                                             tags$img(src = "avatar-icon_cb.png", height = "32px"), 
-                                             "ManyBabies")) 
+                                             tags$img(src = "avatar-icon_cb.png", height = "32px"),
+                                             "ManyBabies", width = 180)) 
                                 
 # Sidebar content
 sidebar <- dashboardSidebar(
+  width = 135,
   sidebarMenu(
-    menuItem(text = "Overview", tabName = "manybabies", icon = icon("binoculars")), 
-    menuItem(text = "By Study", tabName = "studies", icon = icon("graduation-cap")), # add other elements
+    menuItem(text = "Overview", tabName = "overview", icon = icon("binoculars")), 
+    menuItem(text = "By Study", tabName = "studies", icon = icon("graduation-cap")),
     menuItem(text = "By Region", tabName = "region", icon = icon("globe")), 
     menuItem(text = "About", tabName = "about", icon = icon("heart"))
   )
@@ -42,8 +46,7 @@ sidebar <- dashboardSidebar(
 body <-   
   dashboardBody(
     
-    
-    # test
+    # link internal tabs
     tags$script(HTML("
         var openTab = function(tabName){
           $('a', $('.sidebar')).each(function() {
@@ -54,14 +57,16 @@ body <-
         }
       ")),
     
-    
+    # custom color-blind friendly colors (as MB logo)
+    # masking: green, blue, orange, fuchsia
+    tags$style(".small-box.bg-green { background-color: #009E73 !important; color: #FFFFFF !important; }"),
+    tags$style(".small-box.bg-blue { background-color: #56B4E9 !important; color: #FFFFFF !important; }"),
+    tags$style(".small-box.bg-orange { background-color: #E69600 !important; color: #FFFFFF !important; }"),
+    tags$style(".small-box.bg-fuchsia { background-color: #CC79A7 !important; color: #FFFFFF !important; }"),
     
     tabItems(
-      
-      # Front Page
-      
-      # First sidebar tab - ManyBabies
-      tabItem(tabName = "manybabies",
+      # Front Page & first sidebar tab - ManyBabies
+      tabItem(tabName = "overview",
               selected = TRUE, 
               
               fluidRow(
@@ -71,7 +76,7 @@ body <-
               valueBoxOutput("vb_institutions", width = 3), 
               valueBoxOutput("vb_countries", width = 3)
               ),
-              
+
               # global map
               leafletOutput('map', height = 700)
       ),
@@ -89,7 +94,8 @@ body <-
                                                "ManyBabies collaborators in North America", 
                                                icon = icon("glyphicon-blackboard"), width = 18
                                       ),
-                                      box("Created at", width = 18, DT::dataTableOutput("collab_nortam"))
+                                      box("Created at", width = 18, DT::dataTableOutput("collab_nortam")
+                                          )
                                     ),
                                     column(width = 5,
                                       leafletOutput('map_nortam')
@@ -183,6 +189,7 @@ body <-
                                       leafletOutput('map_oceania'))
                                   )
                          )
+                         
       )),
       
       # study tab
@@ -415,11 +422,10 @@ body <-
                 )
       )))
 
-# ui aesthetics
-#ui <- dashboardPage(skin = "black", header, sidebar, body) backup
-
+# ui
 ui <- dashboardPagePlus(skin = "black", header, sidebar, body, useShinyjs())
 
+# custom cluster color
 green_clusters <- JS("function (cluster) {    
                       var childCount = cluster.getChildCount(); 
                       var c = ' marker-cluster-';  
@@ -502,57 +508,40 @@ mb3n_popups <- paste0("<b>", summary_mb3n$institution, "</b>", "<br/>",
 # SERVER CONFIG
 server <- function(input, output) { 
 
-  
-    
+  # dynamic value box (color-blind friendly; like MB logo)
   output$vb_studies <- renderValueBox({
     valueBox(length(unique(mb_collaborators$studies)),
              HTML("<a style=color:white; onclick = openTab('studies'); 
                   href= \"#\">MB Studies</a>"),
              icon = icon("graduation-cap", lib = "font-awesome"), width = 3,
-             color = "light-blue"
+             color = "blue"
              )
   })
-  
-  
-
-  #valueBox(length(unique(mb_collaborators$researcher)), "MB Collaborators", 
-    #       icon("users", lib = "font-awesome"), width = 3),
-  #valueBox(length(unique(mb_collaborators$institution)), "MB Institutions", 
-   #        icon = icon("university", lib = "font-awesome"), width = 3),
-  #valueBox(length(unique(mb_collaborators$country)), "MB Countries", 
-  #         icon = icon("map-o", lib = "font-awesome"), width = 3)
-  #),
-  
-  
   output$vb_collaborators <- renderValueBox({
     valueBox(length(unique(mb_collaborators$researcher)),
              HTML("<a style=color:white; onclick = openTab('studies'); 
                   href= \"#\">MB Collaborators</a>"),
              icon = icon("users", lib = "font-awesome"), width = 3,
-             color = "blue"
-    )
+             color = "orange"
+             )
   })
-  
   output$vb_institutions <- renderValueBox({
     valueBox(length(unique(mb_collaborators$institution)),
              HTML("<a style=color:white; onclick = openTab('region'); 
                   href= \"#\">MB Institutions</a>"),
              icon = icon("university", lib = "font-awesome"), width = 3,
-             color = "yellow"
-    )
+             color = "fuchsia"
+             )
   })
-
   output$vb_countries <- renderValueBox({
     valueBox(length(unique(mb_collaborators$country)),
              HTML("<a style=color:white; onclick = openTab('region'); 
                   href= \"#\">MB Countries</a>"),
              icon = icon("map-o", lib = "font-awesome"), width = 3,
              color = "green"
-    )
+             )
   })
 
-  
-  
   # collapse sidebar
   addClass(selector = "body", class = "sidebar-collapse")
   
