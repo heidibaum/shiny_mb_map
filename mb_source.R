@@ -32,7 +32,7 @@ library(countrycode)
 # load credentials
 options(
   gargle_oauth_cache = ".secrets",
-  gargle_oauth_email = "dalbenwork2@gmail.com"
+  gargle_oauth_email = "youremailhere@email.com"
   )
 
 googlesheets4::gs4_auth()
@@ -75,6 +75,16 @@ summary_global <-
     studies = paste(unique(studies), collapse = ", "),
   ) %>% 
   ungroup()
+
+collab_global <- 
+  mb_collaborators %>% 
+  group_by(researcher) %>% 
+  summarise(
+    institution = paste(unique(institution), collapse = ", "),
+    studies = paste(unique(studies), collapse = ", "),
+    country = paste(unique(country), collapse = ", ")
+  ) %>% 
+  arrange(researcher)
 
 # Separate by continent
 # North America

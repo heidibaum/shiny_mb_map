@@ -37,7 +37,8 @@ sidebar <- dashboardSidebar(
   sidebarMenu(
     menuItem(text = "Overview", tabName = "overview", icon = icon("binoculars")), 
     menuItem(text = "By Study", tabName = "studies", icon = icon("graduation-cap")),
-    menuItem(text = "By Region", tabName = "region", icon = icon("globe")), 
+    menuItem(text = "By Region", tabName = "region", icon = icon("globe")),
+    menuItem(text = "People", tabName = "people", icon = icon("users")),
     menuItem(text = "About", tabName = "about", icon = icon("heart"))
   )
 )
@@ -402,6 +403,14 @@ body <-
                          )
       )),
       
+      # people tab
+      tabItem(tabName = "people",
+              fluidPage(
+                box(width = 10, DT::dataTableOutput("collab_global")
+                    )
+               )
+     ),
+     
       # about tab
       tabItem(tabName = "about",
               fluidPage(
@@ -519,7 +528,7 @@ server <- function(input, output) {
   })
   output$vb_collaborators <- renderValueBox({
     valueBox(length(unique(mb_collaborators$researcher)),
-             HTML("<a style=color:white; onclick = openTab('studies'); 
+             HTML("<a style=color:white; onclick = openTab('people'); 
                   href= \"#\">MB Collaborators</a>"),
              icon = icon("users", lib = "font-awesome"), width = 3,
              color = "orange"
@@ -527,7 +536,7 @@ server <- function(input, output) {
   })
   output$vb_institutions <- renderValueBox({
     valueBox(length(unique(mb_collaborators$institution)),
-             HTML("<a style=color:white; onclick = openTab('region'); 
+             HTML("<a style=color:white; onclick = openTab('people'); 
                   href= \"#\">MB Institutions</a>"),
              icon = icon("university", lib = "font-awesome"), width = 3,
              color = "fuchsia"
@@ -562,6 +571,9 @@ server <- function(input, output) {
                                               iconCreateFunction = green_clusters
                                               ))
   })
+  
+  # collab_global
+  output$collab_global <- DT::renderDataTable(collab_global, options = list(pageLength = 50)) 
   
   # region
   output$collab_nortam <- DT::renderDataTable({collab_nortam})
