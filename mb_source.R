@@ -32,10 +32,10 @@ library(countrycode)
 # load credentials
 options(
   gargle_oauth_cache = ".secrets",
-  gargle_oauth_email = "youremailhere@email.com"
+  gargle_oauth_email = "youremail@email.com"
   )
 
-googlesheets4::gs4_auth()
+#googlesheets4::gs4_auth()
 
 # load database 
 collaborators <- googlesheets4::read_sheet("1Q9hQZ-Nop6Vqq3Ezre8waVU_qDsGhnJLsWYPh5nAih8")
@@ -61,8 +61,6 @@ mb_collaborators <-
                         paste0("anonymous-", 1:length(researcher[is.na(researcher)])), 
                         researcher)
     )
-
-mb_collaborators <- mb_collaborators[, c(1:8, 12, 9:11)] # column reorder
 
 # maps
 # global

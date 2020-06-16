@@ -433,7 +433,7 @@ body <-
       tabItem(tabName = "about",
               fluidPage(
                 h1(strong("About:")),
-                p("Learn more about",
+                p("Learn more about the",
                   a("ManyBabies projects", href = "https://rodrigodalben.github.io/projects"),
                   "and how to",
                   a("get involved.", href = "https://rodrigodalben.github.io/get_involved")
@@ -441,9 +441,11 @@ body <-
                 p("This app was developed by ",
                   a("R-Ladies", href = "http://www.rladies.org"), 
                   "and adapted by",
-                  a("ManyBabies", href = "https://rodrigodalben.github.io/"), # update website
+                  a("Rodrigo Dal Ben", href = "https://github.com/RodrigoDalBen"), 
+                  "and the",
+                  a("ManyBabies team.", href = "https://rodrigodalben.github.io/"), # update website
                   "You can find the source code",
-                  a("here.", href = "https://gith1ub.com/RodrigoDalBen/shiny_mb_map") # update if moved
+                  a("here.", href = "https://github.com/RodrigoDalBen/shiny_mb_map") # update if moved
                   ), 
                 img(src = "avatar-icon_cb.png", height = 200, width = 200)
                 )
