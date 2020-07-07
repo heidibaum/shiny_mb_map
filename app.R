@@ -9,10 +9,9 @@ library(shinyjs)
 
 #####
 # To-do:
-# update webiste address
 #
 # Notes:
-# `setView(lat, lng, zoom)` is a quick-fix; delete as numbers of collaborators increase
+# `setView(lat, lng, zoom)` in Latin America & Oceania is a quick-fix; delete as numbers of collaborators increase
 # 
 # Known issues:
 #   - logo is slighty misaligned in collapsed bar
@@ -27,7 +26,7 @@ library(shinyjs)
 ## UI CONFIG
 
 ## Header
-header <- dashboardHeaderPlus(title = tags$a(href = "http://rodrigodalben.github.io/", # update
+header <- dashboardHeaderPlus(title = tags$a(href = "http://manybabies.github.io/", 
                                              tags$img(src = "avatar-icon_cb.png", height = "32px"),
                                              "ManyBabies", width = 180)) 
                                 
@@ -434,16 +433,16 @@ body <-
               fluidPage(
                 h1(strong("About:")),
                 p("Learn more about the",
-                  a("ManyBabies projects", href = "https://rodrigodalben.github.io/projects"),
+                  a("ManyBabies projects", href = "https://manybabies.github.io/projects"),
                   "and how to",
-                  a("get involved.", href = "https://rodrigodalben.github.io/get_involved")
+                  a("get involved.", href = "https://manybabies.github.io/get_involved")
                   ), 
                 p("This app was developed by ",
                   a("R-Ladies", href = "http://www.rladies.org"), 
                   "and adapted by",
                   a("Rodrigo Dal Ben", href = "https://github.com/RodrigoDalBen"), 
                   "and the",
-                  a("ManyBabies team.", href = "https://rodrigodalben.github.io/"), # update website
+                  a("ManyBabies team.", href = "https://manybabies.github.io/"),
                   "You can find the source code",
                   a("here.", href = "https://github.com/RodrigoDalBen/shiny_mb_map") # update if moved
                   ), 
