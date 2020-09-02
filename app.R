@@ -346,6 +346,24 @@ body <-
                                       leafletOutput('map_mb1b'))
                                   )
                          ),
+                         tabPanel(title = 'MB1G',
+                                  fluidRow(
+                                    column(
+                                      width = 6,
+                                      # A static valueBox
+                                      valueBox(nrow(tab_mb1g),
+                                               "ManyBabies collaborators in MB1G",
+                                               icon = icon("glyphicon-blackboard"), width = 18,
+                                               color = "blue"
+                                      ),
+                                      box("Created at", width = 18, DT::dataTableOutput("tab_mb1g")
+                                      )
+                                    ),
+                                    column(
+                                      width = 5,
+                                      leafletOutput('map_mb1g'))
+                                  )
+                         ),
                          tabPanel(title = 'MB1L',
                                   fluidRow(
                                     column(
@@ -518,6 +536,9 @@ mb1a_popups <- paste0("<b>", summary_mb1a$institution, "</b>", "<br/>",
 )
 mb1b_popups <- paste0("<b>", summary_mb1b$institution, "</b>", "<br/>",
                      "Researchers: ", summary_mb1b$researcher 
+)
+mb1g_popups <- paste0("<b>", summary_mb1g$institution, "</b>", "<br/>",
+                      "Researchers: ", summary_mb1g$researcher 
 )
 mb1l_popups <- paste0("<b>", summary_mb1l$institution, "</b>", "<br/>",
                      "Researchers: ", summary_mb1l$researcher 
@@ -808,6 +829,21 @@ server <- function(input, output) {
                          markerClusterOptions(maxClusterRadius = 30,
                                               iconCreateFunction = green_clusters
                                               )) 
+  })
+  output$tab_mb1g <- DT::renderDataTable({tab_mb1g})
+  output$map_mb1g <- renderLeaflet({
+    leaflet(summary_mb1g) %>% 
+      addTiles() %>%
+      addCircleMarkers(~Longitude, ~Latitude, 
+                       label = purrr::map(mb1g_popups, htmltools::HTML),
+                       labelOptions = labelOptions(textsize = "12px"),
+                       color = ~ "#6ecc39",
+                       radius = 7,
+                       fillOpacity = 0.8,
+                       clusterOptions = 
+                         markerClusterOptions(maxClusterRadius = 30,
+                                              iconCreateFunction = green_clusters
+                         )) 
   })
   output$tab_mb1l <- DT::renderDataTable({tab_mb1l})
   output$map_mb1l <- renderLeaflet({

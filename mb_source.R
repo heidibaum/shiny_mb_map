@@ -1,5 +1,5 @@
 # Rodrigo Dal Ben
-# 27/05/2020, last update: 01/06/2020
+# 27/05/2020, last update: 02/09/2020
 # adapted from: https://github.com/rladies/rshinylady
 
 ##### 
@@ -31,9 +31,9 @@ library(countrycode)
 
 # load credentials
 options(
-  gargle_oauth_cache = ".secrets",
+  gargle_oauth_cache = ".secrets", 
   gargle_oauth_email = "youremail@email.com"
-  )
+  ) 
 
 #googlesheets4::gs4_auth()
 
@@ -380,6 +380,25 @@ tab_mb1b <-
 
 summary_mb1b <- 
   filter_mb1b %>% 
+  group_by(Latitude, Longitude) %>% 
+  summarise(
+    institution = paste(unique(institution), collapse = ", "),
+    researcher = paste(unique(researcher), collapse = ", ")
+  )
+
+# MB1G
+filter_mb1g <- 
+  mb_collaborators %>% 
+  filter(studies == "MB1G") %>% 
+  arrange(institution) 
+
+tab_mb1g <- 
+  filter_mb1g %>% 
+  select(researcher, institution, country, continent) %>% 
+  arrange(researcher)
+
+summary_mb1g <- 
+  filter_mb1g %>% 
   group_by(Latitude, Longitude) %>% 
   summarise(
     institution = paste(unique(institution), collapse = ", "),
