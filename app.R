@@ -458,11 +458,11 @@ body <-
                 p("This app was developed by ",
                   a("R-Ladies", href = "http://www.rladies.org"), 
                   "and adapted by",
-                  a("Rodrigo Dal Ben", href = "https://github.com/RodrigoDalBen"), 
+                  a("Rodrigo Dal Ben", href = "https://github.com/RodDalBen"), 
                   "and the",
                   a("ManyBabies team.", href = "https://manybabies.github.io/"),
                   "You can find the source code",
-                  a("here.", href = "https://github.com/RodrigoDalBen/shiny_mb_map") # update if moved
+                  a("here.", href = "https://github.com/RodDalBen/shiny_mb_map") # update if moved
                   ), 
                 img(src = "avatar-icon_cb.png", height = 200, width = 200)
                 )
