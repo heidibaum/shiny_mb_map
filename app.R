@@ -635,7 +635,7 @@ server <- function(input, output) {
   output$map_latam <- renderLeaflet({
     leaflet(summary_latam) %>% 
       addTiles() %>%
-      setView(lat = 6.664608, lng = -93.889068, zoom = 3) %>% 
+      #setView(lat = 6.664608, lng = -93.889068, zoom = 3) %>% # unnecessary now that there are more contributors in the region 
       addCircleMarkers(~Longitude, ~Latitude, 
                        label = purrr::map(latam_popups, htmltools::HTML),
                        labelOptions = labelOptions(textsize = "12px"),
