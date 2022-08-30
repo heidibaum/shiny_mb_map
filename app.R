@@ -559,7 +559,7 @@ server <- function(input, output) {
 
   # dynamic value box (color-blind friendly; like MB logo)
   output$vb_studies <- renderValueBox({
-    valueBox(length(unique(mb_collaborators$studies)),
+    valueBox(length(unique(na.omit(mb_collaborators$studies))),
              HTML("<a style=color:white; onclick = openTab('studies'); 
                   href= \"#\">MB Studies</a>"),
              icon = icon("graduation-cap", lib = "font-awesome"), width = 3,
@@ -567,7 +567,7 @@ server <- function(input, output) {
              )
   })
   output$vb_collaborators <- renderValueBox({
-    valueBox(length(unique(mb_collaborators$researcher)),
+    valueBox(length(unique(na.omit(mb_collaborators$researcher))),
              HTML("<a style=color:white; onclick = openTab('people'); 
                   href= \"#\">MB Collaborators</a>"),
              icon = icon("users", lib = "font-awesome"), width = 3,
@@ -575,7 +575,7 @@ server <- function(input, output) {
              )
   })
   output$vb_institutions <- renderValueBox({
-    valueBox(length(unique(mb_collaborators$institution)),
+    valueBox(length(unique(na.omit(mb_collaborators$institution))),
              HTML("<a style=color:white; onclick = openTab('people'); 
                   href= \"#\">MB Institutions</a>"),
              icon = icon("university", lib = "font-awesome"), width = 3,
@@ -583,7 +583,7 @@ server <- function(input, output) {
              )
   })
   output$vb_countries <- renderValueBox({
-    valueBox(length(unique(mb_collaborators$country)),
+    valueBox(length(unique(na.omit(mb_collaborators$country))),
              HTML("<a style=color:white; onclick = openTab('region'); 
                   href= \"#\">MB Countries</a>"),
              icon = icon("map-o", lib = "font-awesome"), width = 3,
